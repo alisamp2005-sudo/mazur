@@ -7,6 +7,9 @@ import { registerOAuthRoutes } from "./oauth";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
+import webhookRouter from "../webhook";
+import audioRouter from "../audioServer";
+import { initQueueProcessor } from "../queueProcessor";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -35,6 +38,10 @@ async function startServer() {
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
   // OAuth callback under /api/oauth/callback
   registerOAuthRoutes(app);
+  // Webhook endpoint for ElevenLabs
+  app.use("/api/webhook", webhookRouter);
+  // Audio streaming endpoint
+  app.use("/api/audio", audioRouter);
   // tRPC API
   app.use(
     "/api/trpc",
@@ -54,11 +61,20 @@ async function startServer() {
   const port = await findAvailablePort(preferredPort);
 
   if (port !== preferredPort) {
-    console.log(`Port ${preferredPort} is busy, using port ${port} instead`);
+    console.log(`Port ${preferredPort} is unavailable, using ${port} instead`);
   }
 
   server.listen(port, () => {
     console.log(`Server running on http://localhost:${port}/`);
+    // Initialize queue processor
+    const apiKey = process.env.ELEVENLABS_API_KEY || '';
+    if (apiKey) {
+      const processor = initQueueProcessor(apiKey);
+      processor.start();
+      console.log('[QueueProcessor] Initialized and started');
+    } else {
+      console.warn('[QueueProcessor] ELEVENLABS_API_KEY not set, queue processor not started');
+    }
   });
 }
 
