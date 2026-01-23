@@ -115,3 +115,48 @@ export const callQueue = mysqlTable("call_queue", {
 
 export type CallQueueItem = typeof callQueue.$inferSelect;
 export type InsertCallQueueItem = typeof callQueue.$inferInsert;
+
+/**
+ * Call quality ratings and evaluation
+ */
+export const callRatings = mysqlTable("call_ratings", {
+  id: int("id").autoincrement().primaryKey(),
+  callId: int("callId").notNull(),
+  overallRating: int("overallRating").notNull(), // 1-5 stars
+  clarityScore: int("clarityScore"), // 1-5
+  engagementScore: int("engagementScore"), // 1-5
+  objectiveAchieved: boolean("objectiveAchieved"), // Did call achieve its goal?
+  transferSuccessful: boolean("transferSuccessful"), // Was transfer successful if applicable?
+  feedback: text("feedback"), // Free-form feedback
+  evaluationType: mysqlEnum("evaluationType", ["manual", "auto"]).default("manual").notNull(),
+  evaluatedBy: varchar("evaluatedBy", { length: 255 }), // User ID or "system" for auto
+  autoEvaluation: text("autoEvaluation"), // JSON string with LLM evaluation details
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type CallRating = typeof callRatings.$inferSelect;
+export type InsertCallRating = typeof callRatings.$inferInsert;
+
+/**
+ * Agent prompt versions for A/B testing and improvement
+ */
+export const promptVersions = mysqlTable("prompt_versions", {
+  id: int("id").autoincrement().primaryKey(),
+  agentId: int("agentId").notNull(),
+  version: int("version").notNull(), // Incremental version number
+  promptText: text("promptText").notNull(),
+  firstMessage: text("firstMessage"),
+  isActive: boolean("isActive").default(false).notNull(),
+  description: text("description"), // What changed in this version
+  performanceMetrics: text("performanceMetrics"), // JSON: avg rating, success rate, etc.
+  callCount: int("callCount").default(0).notNull(),
+  avgRating: int("avgRating"), // Average rating * 100 (e.g., 425 = 4.25)
+  successRate: int("successRate"), // Success rate * 100 (e.g., 8500 = 85%)
+  createdBy: varchar("createdBy", { length: 255 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PromptVersion = typeof promptVersions.$inferSelect;
+export type InsertPromptVersion = typeof promptVersions.$inferInsert;

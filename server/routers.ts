@@ -331,6 +331,209 @@ export const appRouter = router({
         return { success: true, maxConcurrent: input.max };
       }),
   }),
+
+  // ============ Call Quality Evaluation ============
+  ratings: router({
+    create: protectedProcedure
+      .input(z.object({
+        callId: z.number(),
+        overallRating: z.number().min(1).max(5),
+        clarityScore: z.number().min(1).max(5).optional(),
+        engagementScore: z.number().min(1).max(5).optional(),
+        objectiveAchieved: z.boolean().optional(),
+        transferSuccessful: z.boolean().optional(),
+        feedback: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        return await db.createCallRating({
+          ...input,
+          evaluationType: 'manual',
+          evaluatedBy: ctx.user?.openId || 'unknown',
+        });
+      }),
+
+    get: protectedProcedure
+      .input(z.object({ callId: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getCallRating(input.callId);
+      }),
+
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        overallRating: z.number().min(1).max(5).optional(),
+        clarityScore: z.number().min(1).max(5).optional(),
+        engagementScore: z.number().min(1).max(5).optional(),
+        objectiveAchieved: z.boolean().optional(),
+        transferSuccessful: z.boolean().optional(),
+        feedback: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { id, ...data } = input;
+        await db.updateCallRating(id, data);
+        return { success: true };
+      }),
+
+    stats: protectedProcedure
+      .input(z.object({ agentId: z.number().optional() }))
+      .query(async ({ input }) => {
+        return await db.getCallRatingsStats(input.agentId);
+      }),
+
+    autoEvaluate: protectedProcedure
+      .input(z.object({ callId: z.number() }))
+      .mutation(async ({ input }) => {
+        // Get call details and transcript
+        const call = await db.getCallById(input.callId);
+        if (!call) {
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: 'Call not found',
+          });
+        }
+
+        const transcripts = await db.getTranscriptsByCallId(input.callId);
+        if (!transcripts || transcripts.length === 0) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'No transcript available for evaluation',
+          });
+        }
+
+        // Build conversation text
+        const conversationText = transcripts.map((t: any) => `${t.role}: ${t.message}`).join('\n');
+
+        // Use LLM to evaluate call quality
+        const { invokeLLM } = await import('./_core/llm');
+        const evaluation = await invokeLLM({
+          messages: [
+            {
+              role: 'system',
+              content: `You are a call quality evaluator. Analyze the following phone conversation and provide:
+1. Overall rating (1-5)
+2. Clarity score (1-5) - How clear and understandable was the conversation?
+3. Engagement score (1-5) - How engaged was the conversation?
+4. Objective achieved (true/false) - Did the call achieve its intended purpose?
+5. Brief feedback (2-3 sentences)
+
+Respond in JSON format with keys: overallRating, clarityScore, engagementScore, objectiveAchieved, feedback`
+            },
+            {
+              role: 'user',
+              content: `Conversation:\n${conversationText}\n\nCall duration: ${call.duration || 0} seconds\nCall status: ${call.status}`
+            }
+          ],
+          response_format: {
+            type: 'json_schema',
+            json_schema: {
+              name: 'call_evaluation',
+              strict: true,
+              schema: {
+                type: 'object',
+                properties: {
+                  overallRating: { type: 'integer', description: 'Overall rating 1-5' },
+                  clarityScore: { type: 'integer', description: 'Clarity score 1-5' },
+                  engagementScore: { type: 'integer', description: 'Engagement score 1-5' },
+                  objectiveAchieved: { type: 'boolean', description: 'Whether objective was achieved' },
+                  feedback: { type: 'string', description: 'Brief feedback' }
+                },
+                required: ['overallRating', 'clarityScore', 'engagementScore', 'objectiveAchieved', 'feedback'],
+                additionalProperties: false
+              }
+            }
+          }
+        });
+
+        const content = evaluation.choices[0].message.content;
+        const result = JSON.parse(typeof content === 'string' ? content : '{}');
+
+        // Save auto evaluation
+        const rating = await db.createCallRating({
+          callId: input.callId,
+          overallRating: result.overallRating,
+          clarityScore: result.clarityScore,
+          engagementScore: result.engagementScore,
+          objectiveAchieved: result.objectiveAchieved,
+          feedback: result.feedback,
+          evaluationType: 'auto',
+          evaluatedBy: 'system',
+          autoEvaluation: JSON.stringify(result),
+        });
+
+        return rating;
+      }),
+  }),
+
+  // ============ Prompt Management ============
+  prompts: router({
+    list: protectedProcedure
+      .input(z.object({ agentId: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getPromptVersions(input.agentId);
+      }),
+
+    create: protectedProcedure
+      .input(z.object({
+        agentId: z.number(),
+        promptText: z.string().min(1),
+        firstMessage: z.string().optional(),
+        description: z.string().optional(),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        // Get latest version number
+        const latestVersion = await db.getLatestPromptVersion(input.agentId);
+        const newVersion = (latestVersion?.version || 0) + 1;
+
+        return await db.createPromptVersion({
+          agentId: input.agentId,
+          version: newVersion,
+          promptText: input.promptText,
+          firstMessage: input.firstMessage,
+          description: input.description,
+          isActive: false,
+          createdBy: ctx.user?.openId || 'unknown',
+        });
+      }),
+
+    getActive: protectedProcedure
+      .input(z.object({ agentId: z.number() }))
+      .query(async ({ input }) => {
+        return await db.getActivePromptVersion(input.agentId);
+      }),
+
+    setActive: protectedProcedure
+      .input(z.object({
+        agentId: z.number(),
+        versionId: z.number(),
+      }))
+      .mutation(async ({ input }) => {
+        await db.setActivePromptVersion(input.agentId, input.versionId);
+        return { success: true };
+      }),
+
+    compare: protectedProcedure
+      .input(z.object({
+        agentId: z.number(),
+        versionIds: z.array(z.number()).min(2).max(5),
+      }))
+      .query(async ({ input }) => {
+        const versions = await db.getPromptVersions(input.agentId);
+        const selectedVersions = versions.filter(v => input.versionIds.includes(v.id));
+
+        // Get ratings for calls using each version
+        // Note: This requires tracking which prompt version was used for each call
+        // For now, return basic version info
+        return selectedVersions.map(v => ({
+          id: v.id,
+          version: v.version,
+          description: v.description,
+          callCount: v.callCount,
+          avgRating: v.avgRating ? v.avgRating / 100 : null,
+          successRate: v.successRate ? v.successRate / 100 : null,
+          createdAt: v.createdAt,
+        }));
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

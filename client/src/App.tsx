@@ -10,6 +10,8 @@ import Agents from "./pages/Agents";
 import PhoneNumbers from "./pages/PhoneNumbers";
 import CallLogs from "./pages/CallLogs";
 import QueueSettings from "./pages/QueueSettings";
+import CallQuality from "./pages/CallQuality";
+import PromptManager from "./pages/PromptManager";
 
 function Router() {
   return (
@@ -37,6 +39,16 @@ function Router() {
       <Route path="/queue-settings">
         <DashboardLayout>
           <QueueSettings />
+        </DashboardLayout>
+      </Route>
+      <Route path="/call-quality">
+        <DashboardLayout>
+          <CallQuality />
+        </DashboardLayout>
+      </Route>
+      <Route path="/prompt-manager">
+        <DashboardLayout>
+          <PromptManager />
         </DashboardLayout>
       </Route>
       <Route path="/404" component={NotFound} />

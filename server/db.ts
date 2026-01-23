@@ -17,7 +17,13 @@ import {
   InsertCallTranscript,
   callQueue,
   CallQueueItem,
-  InsertCallQueueItem
+  InsertCallQueueItem,
+  callRatings,
+  CallRating,
+  InsertCallRating,
+  promptVersions,
+  PromptVersion,
+  InsertPromptVersion
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -357,4 +363,122 @@ export async function getQueueStats() {
   });
 
   return stats;
+}
+
+// ============ Call Ratings ============
+
+export async function createCallRating(rating: InsertCallRating): Promise<CallRating> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(callRatings).values(rating);
+  const inserted = await db.select().from(callRatings).where(eq(callRatings.id, Number(result[0].insertId))).limit(1);
+  return inserted[0]!;
+}
+
+export async function getCallRating(callId: number): Promise<CallRating | null> {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db.select().from(callRatings).where(eq(callRatings.callId, callId)).limit(1);
+  return result[0] || null;
+}
+
+export async function updateCallRating(id: number, data: Partial<InsertCallRating>): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(callRatings).set(data).where(eq(callRatings.id, id));
+}
+
+export async function getCallRatingsStats(agentId?: number) {
+  const db = await getDb();
+  if (!db) return { avgRating: 0, totalRatings: 0, successRate: 0 };
+
+  let query = db.select({
+    avgRating: sql<number>`AVG(${callRatings.overallRating})`,
+    totalRatings: sql<number>`COUNT(*)`,
+    successCount: sql<number>`SUM(CASE WHEN ${callRatings.objectiveAchieved} = 1 THEN 1 ELSE 0 END)`
+  }).from(callRatings);
+
+  if (agentId) {
+    query = query.innerJoin(calls, eq(callRatings.callId, calls.id)).where(eq(calls.agentId, agentId)) as any;
+  }
+
+  const result = await query;
+  const row = result[0];
+
+  return {
+    avgRating: row?.avgRating || 0,
+    totalRatings: row?.totalRatings || 0,
+    successRate: row?.totalRatings ? ((row?.successCount || 0) / row.totalRatings) * 100 : 0
+  };
+}
+
+// ============ Prompt Versions ============
+
+export async function createPromptVersion(version: InsertPromptVersion): Promise<PromptVersion> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(promptVersions).values(version);
+  const inserted = await db.select().from(promptVersions).where(eq(promptVersions.id, Number(result[0].insertId))).limit(1);
+  return inserted[0]!;
+}
+
+export async function getPromptVersions(agentId: number): Promise<PromptVersion[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  return db.select().from(promptVersions).where(eq(promptVersions.agentId, agentId)).orderBy(desc(promptVersions.version));
+}
+
+export async function getActivePromptVersion(agentId: number): Promise<PromptVersion | null> {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db.select().from(promptVersions)
+    .where(and(eq(promptVersions.agentId, agentId), eq(promptVersions.isActive, true)))
+    .limit(1);
+  
+  return result[0] || null;
+}
+
+export async function getLatestPromptVersion(agentId: number): Promise<PromptVersion | null> {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db.select().from(promptVersions)
+    .where(eq(promptVersions.agentId, agentId))
+    .orderBy(desc(promptVersions.version))
+    .limit(1);
+  
+  return result[0] || null;
+}
+
+export async function setActivePromptVersion(agentId: number, versionId: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  // Deactivate all versions for this agent
+  await db.update(promptVersions)
+    .set({ isActive: false })
+    .where(eq(promptVersions.agentId, agentId));
+
+  // Activate the selected version
+  await db.update(promptVersions)
+    .set({ isActive: true })
+    .where(eq(promptVersions.id, versionId));
+}
+
+export async function updatePromptVersionMetrics(versionId: number, metrics: { callCount?: number; avgRating?: number; successRate?: number }): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const updateData: any = {};
+  if (metrics.callCount !== undefined) updateData.callCount = metrics.callCount;
+  if (metrics.avgRating !== undefined) updateData.avgRating = Math.round(metrics.avgRating * 100);
+  if (metrics.successRate !== undefined) updateData.successRate = Math.round(metrics.successRate * 100);
+
+  await db.update(promptVersions).set(updateData).where(eq(promptVersions.id, versionId));
 }

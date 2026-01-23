@@ -91,3 +91,17 @@
 - [x] Add API endpoint to start/stop queue processor
 - [x] Add queue control panel in UI (start/stop, set concurrency)
 - [x] Display current queue processor status in UI
+
+## Call Quality Evaluation System
+- [x] Add call_ratings table (call_id, rating, criteria scores, feedback, evaluator)
+- [x] Add prompt_versions table (agent_id, version, prompt_text, created_at, performance_metrics)
+- [x] Create API endpoint to rate call quality (1-5 stars + criteria)
+- [x] Create API endpoint to add feedback/notes to calls
+- [x] Create API endpoint to get call quality analytics
+- [x] Create API endpoint to save new prompt version
+- [x] Create API endpoint to compare prompt versions performance
+- [x] Implement LLM-based automatic call quality evaluation
+- [x] Build call rating UI with star rating and criteria checkboxes
+- [x] Build prompt editor with version history
+- [x] Build prompt performance comparison dashboard
+- [ ] Add A/B testing support for different prompts

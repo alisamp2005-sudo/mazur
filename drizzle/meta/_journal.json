@@ -15,6 +15,13 @@
       "when": 1768835652694,
       "tag": "0001_careless_timeslip",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1769184852759,
+      "tag": "0002_yellow_captain_universe",
+      "breakpoints": true
     }
   ]
 }
