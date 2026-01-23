@@ -507,7 +507,44 @@ Respond in JSON format with keys: overallRating, clarityScore, engagementScore, 
         versionId: z.number(),
       }))
       .mutation(async ({ input }) => {
+        // Get the prompt version details
+        const promptVersion = await db.getPromptVersionById(input.versionId);
+        if (!promptVersion) {
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: 'Prompt version not found',
+          });
+        }
+
+        // Get the agent details to find elevenlabs_agent_id
+        const agent = await db.getAgentById(input.agentId);
+        if (!agent) {
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: 'Agent not found',
+          });
+        }
+
+        // Update in local database
         await db.setActivePromptVersion(input.agentId, input.versionId);
+
+        // Sync with ElevenLabs if agent has agentId
+        if (agent.agentId) {
+          try {
+            const { updateAgentPrompt } = await import('./elevenlabs-agent');
+            await updateAgentPrompt({
+              agentId: agent.agentId,
+              prompt: promptVersion.promptText,
+              firstMessage: promptVersion.firstMessage || undefined,
+            });
+            console.log(`[Prompt Sync] Successfully synced prompt version ${input.versionId} to ElevenLabs agent ${agent.agentId}`);
+          } catch (error) {
+            console.error('[Prompt Sync] Failed to sync with ElevenLabs:', error);
+            // Don't throw - local update succeeded, just log the sync failure
+            // User can manually update in ElevenLabs dashboard if needed
+          }
+        }
+
         return { success: true };
       }),
 

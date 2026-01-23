@@ -426,6 +426,14 @@ export async function createPromptVersion(version: InsertPromptVersion): Promise
   return inserted[0]!;
 }
 
+export async function getPromptVersionById(versionId: number): Promise<PromptVersion | null> {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db.select().from(promptVersions).where(eq(promptVersions.id, versionId)).limit(1);
+  return result[0] || null;
+}
+
 export async function getPromptVersions(agentId: number): Promise<PromptVersion[]> {
   const db = await getDb();
   if (!db) return [];

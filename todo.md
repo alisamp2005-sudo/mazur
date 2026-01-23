@@ -105,3 +105,10 @@
 - [x] Build prompt editor with version history
 - [x] Build prompt performance comparison dashboard
 - [ ] Add A/B testing support for different prompts
+
+## ElevenLabs Agent API Integration
+- [x] Research ElevenLabs Agent Update API endpoint
+- [x] Create helper function to update agent prompt via API
+- [x] Integrate prompt sync in setActive mutation
+- [x] Add error handling for API failures
+- [x] Test automatic prompt synchronization
