@@ -13,7 +13,8 @@ export interface InitiateCallResponse {
   success: boolean;
   message: string;
   conversation_id: string | null;
-  callSid: string | null;
+  sip_call_id?: string | null; // For SIP Trunk
+  callSid?: string | null; // For Twilio (legacy)
 }
 
 export interface ConversationDetails {
@@ -35,7 +36,7 @@ export interface ConversationDetails {
 }
 
 /**
- * Initiate an outbound call via ElevenLabs + Twilio
+ * Initiate an outbound call via ElevenLabs SIP Trunk
  */
 export async function initiateOutboundCall(
   apiKey: string,
@@ -43,7 +44,7 @@ export async function initiateOutboundCall(
 ): Promise<InitiateCallResponse> {
   try {
     const response = await axios.post<InitiateCallResponse>(
-      `${ELEVENLABS_API_URL}/v1/convai/twilio/outbound-call`,
+      `${ELEVENLABS_API_URL}/v1/convai/sip-trunk/outbound-call`,
       {
         agent_id: params.agentId,
         agent_phone_number_id: params.agentPhoneNumberId,

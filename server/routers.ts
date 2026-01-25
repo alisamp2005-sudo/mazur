@@ -285,7 +285,7 @@ export const appRouter = router({
           // Create call record (without phone number ID since it's manual input)
           const call = await db.createCall({
             conversationId: result.conversation_id || undefined,
-            callSid: result.callSid || undefined,
+            callSid: result.sip_call_id || result.callSid || undefined, // Support both SIP and Twilio
             agentId: agent.id,
             phoneNumberId: null, // No phone number record for manual calls
             toNumber: input.phoneNumber,

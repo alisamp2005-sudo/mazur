@@ -171,3 +171,8 @@
 
 ## Bug Fixes
 - [x] Fix API error by restarting server (database connection issue resolved)
+
+## Bug Fixes - Call Initiation
+- [x] Fix "Failed to initiate call" error on Make a Call page
+- [x] Changed API endpoint from Twilio to SIP Trunk
+- [x] Updated response interface to support sip_call_id
