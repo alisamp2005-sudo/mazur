@@ -8,4 +8,7 @@ export const ENV = {
   forgeApiUrl: process.env.BUILT_IN_FORGE_API_URL ?? "",
   forgeApiKey: process.env.BUILT_IN_FORGE_API_KEY ?? "",
   elevenlabsApiKey: process.env.ELEVENLABS_API_KEY ?? "",
+  tcxApiUrl: process.env.TCX_API_URL ?? "",
+  tcxApiEmail: process.env.TCX_API_EMAIL ?? "",
+  tcxApiPassword: process.env.TCX_API_PASSWORD ?? "",
 };

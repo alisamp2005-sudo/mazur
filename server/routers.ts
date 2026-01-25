@@ -8,6 +8,10 @@ import { parsePhoneNumberFile, isValidPhoneNumber } from "./fileParser";
 import { initiateOutboundCall, getConversationDetails } from "./elevenlabs";
 import { TRPCError } from "@trpc/server";
 import { getQueueProcessor } from "./queueProcessor";
+import { tcxMonitor } from "./services/tcx-monitor";
+import { autoQueueManager } from './services/auto-queue-manager';
+import { operatorAvailability } from './services/operator-availability';
+import { queueManager } from './services/queue-manager';
 
 export const appRouter = router({
   system: systemRouter,
@@ -570,6 +574,131 @@ Respond in JSON format with keys: overallRating, clarityScore, engagementScore, 
           createdAt: v.createdAt,
         }));
       }),
+  }),
+
+  // ============ 3CX Integration ============
+  tcx: router({  
+    getOperatorStatuses: protectedProcedure.query(async () => {
+      return tcxMonitor.getAllStatuses();
+    }),
+
+    checkAllBusy: protectedProcedure.query(async () => {
+      return {
+        allBusy: tcxMonitor.areAllOperatorsBusy(),
+        anyAvailable: tcxMonitor.isAnyOperatorAvailable(),
+      };
+    }),
+
+    startMonitoring: protectedProcedure.mutation(async () => {
+      await tcxMonitor.startMonitoring();
+      return { success: true };
+    }),
+
+    stopMonitoring: protectedProcedure.mutation(async () => {
+      tcxMonitor.stopMonitoring();
+      return { success: true };
+    }),
+  }),
+
+  // ============ Queue Control ============
+  queueControl: router({
+    pause: protectedProcedure.mutation(async () => {
+      const processor = getQueueProcessor();
+      if (!processor) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Queue processor not initialized' });
+      processor.pause();
+      return { success: true };
+    }),
+
+    resume: protectedProcedure.mutation(async () => {
+      const processor = getQueueProcessor();
+      if (!processor) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: 'Queue processor not initialized' });
+      processor.resume();
+      return { success: true };
+    }),
+
+    startAutoManagement: protectedProcedure.mutation(async () => {
+      await autoQueueManager.start();
+      return { success: true };
+    }),
+
+    stopAutoManagement: protectedProcedure.mutation(async () => {
+      autoQueueManager.stop();
+      return { success: true };
+    }),
+
+    getAutoManagementStatus: protectedProcedure.query(async () => {
+      return autoQueueManager.getStatus();
+    }),
+  }),
+
+  // ============ Operator Availability (for ElevenLabs) ============
+  operators: router({
+    // Public endpoint for ElevenLabs AI agent to check availability
+    checkAvailability: publicProcedure.query(async () => {
+      return operatorAvailability.getStatus();
+    }),
+
+    // Register a transfer to operators
+    registerTransfer: publicProcedure
+      .input(z.object({ callId: z.string() }))
+      .mutation(async ({ input }) => {
+        operatorAvailability.registerTransfer(input.callId);
+        return { success: true };
+      }),
+
+    // Complete a transfer
+    completeTransfer: publicProcedure
+      .input(z.object({ callId: z.string() }))
+      .mutation(async ({ input }) => {
+        operatorAvailability.completeTransfer(input.callId);
+        return { success: true };
+      }),
+
+    // Admin endpoints
+    getStatus: protectedProcedure.query(async () => {
+      return operatorAvailability.getStatus();
+    }),
+
+    setOperatorBusy: protectedProcedure
+      .input(z.object({ extension: z.string() }))
+      .mutation(async ({ input }) => {
+        operatorAvailability.setOperatorBusy(input.extension);
+        return { success: true };
+      }),
+
+    setOperatorAvailable: protectedProcedure
+      .input(z.object({ extension: z.string() }))
+      .mutation(async ({ input }) => {
+        operatorAvailability.setOperatorAvailable(input.extension);
+        return { success: true };
+      }),
+
+    reset: protectedProcedure.mutation(async () => {
+      operatorAvailability.reset();
+      return { success: true };
+    }),
+  }),
+
+  // ============ Integrated Queue Manager ============
+  queueManager: router({
+    start: protectedProcedure.mutation(async () => {
+      queueManager.start();
+      return { success: true };
+    }),
+
+    stop: protectedProcedure.mutation(async () => {
+      queueManager.stop();
+      return { success: true };
+    }),
+
+    getStatus: protectedProcedure.query(async () => {
+      return queueManager.getStatus();
+    }),
+
+    triggerCheck: protectedProcedure.mutation(async () => {
+      queueManager.triggerCheck();
+      return { success: true };
+    }),
   }),
 });
 

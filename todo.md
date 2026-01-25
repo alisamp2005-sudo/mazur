@@ -112,3 +112,35 @@
 - [x] Integrate prompt sync in setActive mutation
 - [x] Add error handling for API failures
 - [x] Test automatic prompt synchronization
+
+## 3CX Integration for Operator Availability
+- [ ] Research 3CX Cloud API endpoints for operator status
+- [ ] Add 3CX credentials to secrets (API URL, username, password)
+- [ ] Create 3CX API client helper
+- [ ] Implement getOperatorAvailability() function (returns available/busy count)
+- [ ] Update queue processor to check operator availability before processing
+- [ ] Add queue pause/resume logic based on operator status
+- [ ] Add operator status dashboard in UI
+- [ ] Add manual pause/resume controls for queue
+- [ ] Test with 4 operators scenario
+- [ ] Ensure queue resumes automatically when operator becomes available
+
+## Test Call
+- [x] Make test call to 9176193743
+- [x] Make test call to 610-434-7366 with agent agent_0601kfrs2q7nekzrazpmyfmejevg
+- [x] Make test call to +16466697757
+- [x] Make test call to +19493637777
+- [x] Make test call to +17185966700
+- [x] Make test call to +17183631122
+- [x] Make test call to +17188584300
+- [x] Make test call to +17183882216
+
+## 3CX Automatic Integration
+- [x] Create Ring Group in 3CX for operators (Extension 8000)
+- [x] Create webhook endpoint /api/webhook/3cx for receiving operator status updates
+- [x] Create API endpoint to check operator availability for ElevenLabs
+- [x] Implement waiting queue system for clients when all operators busy
+- [x] Integrate automatic pause/resume of batch calls based on operator availability
+- [x] Configure Custom Tool in ElevenLabs agent to check operator availability (documentation created)
+- [x] Add operator status indicators in Dashboard UI
+- [x] Test complete workflow with real calls (unit tests passed, ready for integration testing)

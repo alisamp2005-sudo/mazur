@@ -7,6 +7,7 @@ import { initiateOutboundCall } from './elevenlabs';
  */
 export class QueueProcessor {
   private isRunning: boolean = false;
+  private isPaused: boolean = false; // NEW: Pause state
   private activeWorkers: number = 0;
   private maxConcurrentCalls: number = 3; // Default to 3, can be changed
   private readonly POLL_INTERVAL_MS = 5000; // Check queue every 5 seconds
@@ -47,10 +48,31 @@ export class QueueProcessor {
   getStatus() {
     return {
       isRunning: this.isRunning,
+      isPaused: this.isPaused,
       activeWorkers: this.activeWorkers,
       maxConcurrent: this.maxConcurrentCalls,
       maxAllowed: this.MAX_ALLOWED_CONCURRENT,
     };
+  }
+
+  /**
+   * Pause queue processing
+   */
+  pause() {
+    this.isPaused = true;
+    console.log('[QueueProcessor] Paused');
+  }
+
+  /**
+   * Resume queue processing
+   */
+  resume() {
+    this.isPaused = false;
+    console.log('[QueueProcessor] Resumed');
+    // Trigger immediate processing
+    if (this.isRunning) {
+      this.processQueue();
+    }
   }
 
   /**
@@ -69,6 +91,11 @@ export class QueueProcessor {
    */
   private async processQueue() {
     if (!this.isRunning) return;
+    if (this.isPaused) {
+      console.log('[QueueProcessor] Paused, skipping processing');
+      this.pollTimer = setTimeout(() => this.processQueue(), this.POLL_INTERVAL_MS);
+      return;
+    }
 
     try {
       // Check if we can process more items

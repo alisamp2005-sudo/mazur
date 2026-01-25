@@ -2,6 +2,8 @@ import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Phone, PhoneCall, PhoneOff, Clock, CheckCircle2, XCircle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { OperatorStatusPanel } from "@/components/OperatorStatusPanel";
+import { QueueManagerPanel } from "@/components/QueueManagerPanel";
 
 export default function Dashboard() {
   const { data: callStats, isLoading: statsLoading } = trpc.calls.stats.useQuery();
@@ -135,6 +137,12 @@ export default function Dashboard() {
           ))}
         </div>
       </div>
+
+        {/* Queue Manager Panel */}
+        <QueueManagerPanel />
+
+        {/* Operator Status Panel (Legacy) */}
+        {/* <OperatorStatusPanel /> */}
 
       {/* Recent Calls */}
       <div>
