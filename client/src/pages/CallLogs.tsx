@@ -1,27 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Phone, Clock, CheckCircle2, XCircle, PhoneCall, RefreshCw } from "lucide-react";
+import { Phone, Clock, CheckCircle2, XCircle, PhoneCall } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function CallLogs() {
   const [selectedCallId, setSelectedCallId] = useState<number | null>(null);
-  const [autoRefresh, setAutoRefresh] = useState(true);
 
-  const { data: calls, isLoading, refetch } = trpc.calls.list.useQuery({ limit: 100, offset: 0 });
-
-  // Auto-refresh every 5 seconds
-  useEffect(() => {
-    if (!autoRefresh) return;
-    
-    const interval = setInterval(() => {
-      refetch();
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [autoRefresh, refetch]);
+  const { data: calls, isLoading } = trpc.calls.list.useQuery({ limit: 100, offset: 0 });
   const { data: callDetails } = trpc.calls.get.useQuery(
     { id: selectedCallId! },
     { enabled: !!selectedCallId }
@@ -29,18 +17,9 @@ export default function CallLogs() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Call Logs</h1>
-          <p className="text-muted-foreground mt-2">View all call history and transcripts</p>
-        </div>
-        <Button
-          variant={autoRefresh ? "default" : "outline"}
-          onClick={() => setAutoRefresh(!autoRefresh)}
-        >
-          <RefreshCw className={`h-4 w-4 mr-2 ${autoRefresh ? 'animate-spin' : ''}`} />
-          {autoRefresh ? 'Auto-refresh ON' : 'Auto-refresh OFF'}
-        </Button>
+      <div>
+        <h1 className="text-3xl font-bold">Call Logs</h1>
+        <p className="text-muted-foreground mt-2">View all call history and transcripts</p>
       </div>
 
       <Card>
