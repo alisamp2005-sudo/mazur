@@ -240,6 +240,68 @@ export const appRouter = router({
     stats: protectedProcedure.query(async () => {
       return await db.getCallStats();
     }),
+
+    // Create single call with manual phone number input
+    createSingleCall: protectedProcedure
+      .input(z.object({
+        agentId: z.number(),
+        phoneNumber: z.string().min(1, "Phone number is required"),
+      }))
+      .mutation(async ({ input }) => {
+        // Validate phone number format
+        if (!isValidPhoneNumber(input.phoneNumber)) {
+          throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'Invalid phone number format. Use E.164 format (e.g., +1234567890)',
+          });
+        }
+
+        // Get agent
+        const agent = await db.getAgentById(input.agentId);
+        if (!agent) {
+          throw new TRPCError({
+            code: 'NOT_FOUND',
+            message: 'Agent not found',
+          });
+        }
+
+        // Check API key
+        const apiKey = process.env.ELEVENLABS_API_KEY || '';
+        if (!apiKey) {
+          throw new TRPCError({
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'ElevenLabs API key not configured',
+          });
+        }
+
+        try {
+          // Initiate call via ElevenLabs
+          const result = await initiateOutboundCall(apiKey, {
+            agentId: agent.agentId,
+            agentPhoneNumberId: agent.phoneNumberId,
+            toNumber: input.phoneNumber,
+          });
+
+          // Create call record (without phone number ID since it's manual input)
+          const call = await db.createCall({
+            conversationId: result.conversation_id || undefined,
+            callSid: result.callSid || undefined,
+            agentId: agent.id,
+            phoneNumberId: null, // No phone number record for manual calls
+            toNumber: input.phoneNumber,
+            status: 'initiated',
+            hasAudio: false,
+            hasTranscript: false,
+          });
+
+          return { success: true, call };
+        } catch (error: any) {
+          throw new TRPCError({
+            code: 'INTERNAL_SERVER_ERROR',
+            message: error.message || 'Failed to initiate call',
+          });
+        }
+      }),
   }),
 
   // ============ Call Queue Management ============

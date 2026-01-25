@@ -123,14 +123,16 @@ async function handleTranscriptionWebhook(data: any) {
   }
 
   // Update phone number status
-  if (data.status === 'done') {
-    await db.updatePhoneNumber(call.phoneNumberId, {
-      status: 'completed',
-    });
-  } else if (data.status === 'failed') {
-    await db.updatePhoneNumber(call.phoneNumberId, {
-      status: 'failed',
-    });
+  if (call.phoneNumberId) {
+    if (data.status === 'done') {
+      await db.updatePhoneNumber(call.phoneNumberId, {
+        status: 'completed',
+      });
+    } else if (data.status === 'failed') {
+      await db.updatePhoneNumber(call.phoneNumberId, {
+        status: 'failed',
+      });
+    }
   }
 
   console.log(`[Webhook] Transcription processed for call ${call.id}`);
@@ -200,9 +202,11 @@ async function handleCallInitiationFailure(data: any) {
   });
 
   // Update phone number status
-  await db.updatePhoneNumber(call.phoneNumberId, {
-    status: 'failed',
-  });
+  if (call.phoneNumberId) {
+    await db.updatePhoneNumber(call.phoneNumberId, {
+      status: 'failed',
+    });
+  }
 
   console.log(`[Webhook] Call ${call.id} marked as failed`);
 }

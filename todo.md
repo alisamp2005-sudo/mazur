@@ -152,3 +152,15 @@
 - [ ] Set transfer destination in ElevenLabs agent to Ring Group 8000 (manual setup by user)
 - [x] Activate Queue Manager in admin panel
 - [ ] Test full workflow: AI call → operator check → transfer → queue management
+
+## DID Routing and Transfer Setup
+- [x] Review additional redirect settings from user
+- [x] Configure transfer in ElevenLabs using SIP URI (sip:8000@clientservicesltd.3cx.agency)
+- [ ] Test full workflow with real call transfer
+
+## Single Call Feature
+- [x] Add single call feature with phone number input in admin panel
+- [x] Add tRPC mutation for creating single call
+- [x] Add UI form with phone number input and agent selector
+- [x] Add validation for phone number format
+- [x] Show success/error feedback after call creation

@@ -12,6 +12,7 @@ import CallLogs from "./pages/CallLogs";
 import QueueSettings from "./pages/QueueSettings";
 import CallQuality from "./pages/CallQuality";
 import PromptManager from "./pages/PromptManager";
+import SingleCall from "./pages/SingleCall";
 
 function Router() {
   return (
@@ -49,6 +50,11 @@ function Router() {
       <Route path="/prompt-manager">
         <DashboardLayout>
           <PromptManager />
+        </DashboardLayout>
+      </Route>
+      <Route path="/make-call">
+        <DashboardLayout>
+          <SingleCall />
         </DashboardLayout>
       </Route>
       <Route path="/404" component={NotFound} />

@@ -61,7 +61,7 @@ export const calls = mysqlTable("calls", {
   conversationId: varchar("conversationId", { length: 255 }).unique(),
   callSid: varchar("callSid", { length: 255 }),
   agentId: int("agentId").notNull(),
-  phoneNumberId: int("phoneNumberId").notNull(),
+  phoneNumberId: int("phoneNumberId"),
   toNumber: varchar("toNumber", { length: 50 }).notNull(),
   status: mysqlEnum("status", ["initiated", "in-progress", "processing", "done", "failed"]).default("initiated").notNull(),
   startTime: bigint("startTime", { mode: "number" }), // Unix timestamp in seconds

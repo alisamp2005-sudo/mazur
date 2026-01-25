@@ -29,6 +29,7 @@ import { Button } from "./ui/button";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
+  { icon: PhoneCall, label: "Make a Call", path: "/make-call" },
   { icon: Users, label: "Agents", path: "/agents" },
   { icon: Phone, label: "Phone Numbers", path: "/phone-numbers" },
   { icon: PhoneCall, label: "Call Logs", path: "/call-logs" },
