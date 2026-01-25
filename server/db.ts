@@ -23,7 +23,10 @@ import {
   InsertCallRating,
   promptVersions,
   PromptVersion,
-  InsertPromptVersion
+  InsertPromptVersion,
+  telegramSettings,
+  TelegramSettings,
+  InsertTelegramSettings
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -489,4 +492,39 @@ export async function updatePromptVersionMetrics(versionId: number, metrics: { c
   if (metrics.successRate !== undefined) updateData.successRate = Math.round(metrics.successRate * 100);
 
   await db.update(promptVersions).set(updateData).where(eq(promptVersions.id, versionId));
+}
+
+// ============ Telegram Settings ============
+
+export async function getTelegramSettings(userId: number): Promise<TelegramSettings | null> {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db.select().from(telegramSettings).where(eq(telegramSettings.userId, userId)).limit(1);
+  return result[0] || null;
+}
+
+export async function upsertTelegramSettings(settings: InsertTelegramSettings): Promise<TelegramSettings> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const existing = await getTelegramSettings(settings.userId);
+  
+  if (existing) {
+    await db.update(telegramSettings)
+      .set(settings)
+      .where(eq(telegramSettings.userId, settings.userId));
+    return (await getTelegramSettings(settings.userId))!;
+  } else {
+    const result = await db.insert(telegramSettings).values(settings);
+    const inserted = await db.select().from(telegramSettings).where(eq(telegramSettings.id, Number(result[0].insertId))).limit(1);
+    return inserted[0]!;
+  }
+}
+
+export async function deleteTelegramSettings(userId: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.delete(telegramSettings).where(eq(telegramSettings.userId, userId));
 }

@@ -129,3 +129,50 @@ export async function downloadAudioFile(url: string): Promise<Buffer> {
     throw new Error('Failed to download audio file');
   }
 }
+
+export interface ConversationListItem {
+  conversation_id: string;
+  agent_id: string;
+  status: 'initiated' | 'in-progress' | 'processing' | 'done' | 'failed';
+  start_time_unix_secs: number;
+  call_duration_secs?: number;
+}
+
+export interface ConversationListResponse {
+  conversations: ConversationListItem[];
+  has_more: boolean;
+  cursor?: string;
+}
+
+/**
+ * Get list of conversations with pagination
+ */
+export async function getConversations(
+  apiKey: string,
+  options?: {
+    agent_id?: string;
+    cursor?: string;
+    page_size?: number;
+  }
+): Promise<ConversationListResponse> {
+  try {
+    const params = new URLSearchParams();
+    if (options?.agent_id) params.append('agent_id', options.agent_id);
+    if (options?.cursor) params.append('cursor', options.cursor);
+    if (options?.page_size) params.append('page_size', options.page_size.toString());
+
+    const response = await axios.get<ConversationListResponse>(
+      `${ELEVENLABS_API_URL}/v1/convai/conversations?${params.toString()}`,
+      {
+        headers: {
+          'xi-api-key': apiKey,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error: any) {
+    console.error('[ElevenLabs] Failed to get conversations:', error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || 'Failed to get conversations list');
+  }
+}

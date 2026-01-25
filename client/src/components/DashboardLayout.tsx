@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/sidebar";
 import { getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { LayoutDashboard, LogOut, PanelLeft, Users, Phone, PhoneCall, Settings, Star, FileText } from "lucide-react";
+import { LayoutDashboard, LogOut, PanelLeft, Users, Phone, PhoneCall, Settings, Star, FileText, Mic, Send } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
@@ -33,8 +33,10 @@ const menuItems = [
   { icon: Users, label: "Agents", path: "/agents" },
   { icon: Phone, label: "Batch Calls", path: "/phone-numbers" },
   { icon: PhoneCall, label: "Call Logs", path: "/call-logs" },
+  { icon: Mic, label: "Recordings", path: "/recordings" },
   { icon: Star, label: "Call Quality", path: "/call-quality" },
   { icon: FileText, label: "Prompt Manager", path: "/prompt-manager" },
+  { icon: Send, label: "Telegram", path: "/telegram-settings" },
   { icon: Settings, label: "Queue Settings", path: "/queue-settings" },
 ];
 

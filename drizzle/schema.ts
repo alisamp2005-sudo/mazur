@@ -160,3 +160,21 @@ export const promptVersions = mysqlTable("prompt_versions", {
 
 export type PromptVersion = typeof promptVersions.$inferSelect;
 export type InsertPromptVersion = typeof promptVersions.$inferInsert;
+
+/**
+ * Telegram integration settings
+ */
+export const telegramSettings = mysqlTable("telegram_settings", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(), // Owner user ID
+  botToken: text("botToken"), // Telegram bot token
+  chatId: varchar("chatId", { length: 255 }), // Telegram chat ID to send recordings
+  isActive: boolean("isActive").default(false).notNull(),
+  sendRecordings: boolean("sendRecordings").default(true).notNull(),
+  sendTranscripts: boolean("sendTranscripts").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type TelegramSettings = typeof telegramSettings.$inferSelect;
+export type InsertTelegramSettings = typeof telegramSettings.$inferInsert;

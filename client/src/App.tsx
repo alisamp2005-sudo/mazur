@@ -13,6 +13,8 @@ import QueueSettings from "./pages/QueueSettings";
 import CallQuality from "./pages/CallQuality";
 import PromptManager from "./pages/PromptManager";
 import SingleCall from "./pages/SingleCall";
+import CallRecordings from "./pages/CallRecordings";
+import TelegramSettings from "./pages/TelegramSettings";
 
 function Router() {
   return (
@@ -55,6 +57,16 @@ function Router() {
       <Route path="/make-call">
         <DashboardLayout>
           <SingleCall />
+        </DashboardLayout>
+      </Route>
+      <Route path="/recordings">
+        <DashboardLayout>
+          <CallRecordings />
+        </DashboardLayout>
+      </Route>
+      <Route path="/telegram-settings">
+        <DashboardLayout>
+          <TelegramSettings />
         </DashboardLayout>
       </Route>
       <Route path="/404" component={NotFound} />
