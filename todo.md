@@ -144,3 +144,11 @@
 - [x] Configure Custom Tool in ElevenLabs agent to check operator availability (documentation created)
 - [x] Add operator status indicators in Dashboard UI
 - [x] Test complete workflow with real calls (unit tests passed, ready for integration testing)
+
+## Full System Integration
+- [x] Configure 3CX Ring Group 8000 settings (hold music, timeout, etc)
+- [x] Configure ElevenLabs agent with Custom Tool for operator availability check
+- [x] Update ElevenLabs agent prompt with transfer instructions
+- [ ] Set transfer destination in ElevenLabs agent to Ring Group 8000 (manual setup by user)
+- [x] Activate Queue Manager in admin panel
+- [ ] Test full workflow: AI call → operator check → transfer → queue management

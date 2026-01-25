@@ -141,8 +141,7 @@ export default function Dashboard() {
         {/* Queue Manager Panel */}
         <QueueManagerPanel />
 
-        {/* Operator Status Panel (Legacy) */}
-        {/* <OperatorStatusPanel /> */}
+        {/* Operator Status Panel (Legacy) - Commented out */}
 
       {/* Recent Calls */}
       <div>
