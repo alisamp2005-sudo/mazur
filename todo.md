@@ -164,3 +164,10 @@
 - [x] Add UI form with phone number input and agent selector
 - [x] Add validation for phone number format
 - [x] Show success/error feedback after call creation
+
+## UI Improvements
+- [x] Rename "Phone Numbers" to "Batch Calls" in navigation menu
+- [x] Update page title and descriptions
+
+## Bug Fixes
+- [x] Fix API error by restarting server (database connection issue resolved)

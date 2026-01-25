@@ -136,8 +136,8 @@ export default function PhoneNumbers() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Phone Numbers</h1>
-          <p className="text-muted-foreground mt-2">Manage your phone number database</p>
+          <h1 className="text-3xl font-bold">Batch Calls</h1>
+          <p className="text-muted-foreground mt-2">Upload phone numbers and run batch calling campaigns</p>
         </div>
         <div className="flex gap-2">
           {selectedNumbers.length > 0 && (
@@ -162,7 +162,7 @@ export default function PhoneNumbers() {
       <Card>
         <CardHeader>
           <CardTitle>Phone Numbers ({phoneData?.total || 0})</CardTitle>
-          <CardDescription>Imported phone numbers ready for calling</CardDescription>
+          <CardDescription>Imported phone numbers for batch calling campaigns</CardDescription>
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -233,7 +233,7 @@ export default function PhoneNumbers() {
           <DialogHeader>
             <DialogTitle>Upload Phone Numbers</DialogTitle>
             <DialogDescription>
-              Upload a CSV or Excel file with phone numbers. The file must have a column named "phone" or "phone_number".
+              Upload a CSV or Excel file with phone numbers for batch calling. The file must have a column named "phone" or "phone_number".
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
