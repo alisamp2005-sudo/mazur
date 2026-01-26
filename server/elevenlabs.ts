@@ -10,11 +10,11 @@ export interface InitiateCallParams {
 }
 
 export interface InitiateCallResponse {
-  success: boolean;
-  message: string;
-  conversation_id: string | null;
+  conversation_id?: string | null;
   sip_call_id?: string | null; // For SIP Trunk
   callSid?: string | null; // For Twilio (legacy)
+  success?: boolean;
+  message?: string;
 }
 
 export interface ConversationDetails {
@@ -43,7 +43,7 @@ export async function initiateOutboundCall(
   params: InitiateCallParams
 ): Promise<InitiateCallResponse> {
   try {
-    const response = await axios.post<InitiateCallResponse>(
+    const response = await axios.post<any>(
       `${ELEVENLABS_API_URL}/v1/convai/sip-trunk/outbound-call`,
       {
         agent_id: params.agentId,
@@ -59,10 +59,20 @@ export async function initiateOutboundCall(
       }
     );
 
-    return response.data;
+    console.log('[ElevenLabs] Call initiated successfully:', {
+      sip_call_id: response.data.sip_call_id,
+      conversation_id: response.data.conversation_id,
+    });
+
+    return {
+      conversation_id: response.data.conversation_id,
+      sip_call_id: response.data.sip_call_id,
+      success: true,
+      message: 'Call initiated successfully',
+    };
   } catch (error: any) {
     console.error('[ElevenLabs] Failed to initiate call:', error.response?.data || error.message);
-    throw new Error(error.response?.data?.message || 'Failed to initiate call');
+    throw new Error(error.response?.data?.detail?.message || error.response?.data?.message || 'Failed to initiate call');
   }
 }
 

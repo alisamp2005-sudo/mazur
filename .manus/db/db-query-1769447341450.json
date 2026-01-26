@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE agents SET agentId = 'agent_8301kfgw54f5eekabw8htz6ekgnw', phoneNumberId = 'phnum_2401kfgya520f2xagfd4vv3c4qee' WHERE name = 'TESTED';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4Va2H7czYQm4hXN.1701b0c89732 --database J2tnPxqSH3BCis3dqzHXrX --execute UPDATE agents SET agentId = 'agent_8301kfgw54f5eekabw8htz6ekgnw', phoneNumberId = 'phnum_2401kfgya520f2xagfd4vv3c4qee' WHERE name = 'TESTED';",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 383
+}
