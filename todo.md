@@ -171,6 +171,8 @@
 
 ## Bug Fixes
 - [x] Fix API error by restarting server (database connection issue resolved)
+- [x] Fix TypeScript errors in server/db.ts (passwordHash removed)
+- [x] Fix TypeScript errors in server/_core/sdk.ts (getUserByOpenId added)
 
 ## Bug Fixes - Call Initiation
 - [x] Fix "Failed to initiate call" error on Make a Call page

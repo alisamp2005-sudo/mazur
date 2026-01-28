@@ -56,8 +56,8 @@ export async function upsertUser(user: InsertUser): Promise<void> {
 
   try {
     const values: InsertUser = {
+      openId: user.openId,
       email: user.email,
-      passwordHash: user.passwordHash,
     };
     const updateSet: Record<string, unknown> = {};
 
@@ -112,6 +112,17 @@ export async function getUserById(id: number) {
   }
 
   const result = await db.select().from(users).where(eq(users.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getUserByOpenId(openId: string) {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get user: database not available");
+    return undefined;
+  }
+
+  const result = await db.select().from(users).where(eq(users.openId, openId)).limit(1);
   return result.length > 0 ? result[0] : undefined;
 }
 
