@@ -684,6 +684,13 @@ Respond in JSON format with keys: overallRating, clarityScore, engagementScore, 
       tcxMonitor.stopMonitoring();
       return { success: true };
     }),
+
+    setOperatorAvailable: protectedProcedure
+      .input(z.object({ extension: z.string() }))
+      .mutation(async ({ input }) => {
+        tcxMonitor.updateOperatorStatus(input.extension, "Available");
+        return { success: true, extension: input.extension, status: "Available" };
+      }),
   }),
 
   // ============ Queue Control ============

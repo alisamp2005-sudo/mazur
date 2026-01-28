@@ -270,32 +270,60 @@ router.post('/elevenlabs', async (req: Request, res: Response) => {
 /**
  * 3CX Webhook endpoint for receiving operator status events
  * 
- * Expected payload from 3CX Call Flow:
+ * Supports both POST (JSON body) and GET (URL query parameters) from 3CX CRM Integration
+ * 
+ * POST body format:
  * {
- *   "event": "call_answered" | "call_ended",
+ *   "event": "call_answered" | "call_ended" | "call_ringing",
  *   "extension": "1000",
  *   "callId": "...",
  *   "timestamp": "2024-01-01T12:00:00Z"
  * }
+ * 
+ * GET query format (3CX CRM Integration):
+ * /api/webhook/3cx?event=call_answered&extension=1000&callerNumber=+1234567890&displayName=John
  */
+router.get('/3cx', async (req: Request, res: Response) => {
+  try {
+    const { event, extension, callerNumber, displayName } = req.query;
+
+    console.log(`[3CX Webhook GET] Received event: ${event} for extension ${extension}`);
+
+    // Update operator status based on event
+    if (event === "call_answered") {
+      tcxMonitor.updateOperatorStatus(extension as string, "Busy");
+    } else if (event === "call_ended") {
+      tcxMonitor.updateOperatorStatus(extension as string, "Available");
+    } else if (event === "call_ringing") {
+      tcxMonitor.updateOperatorStatus(extension as string, "Ringing");
+    }
+
+    // Return empty response for CRM Integration (3CX just needs 200 OK)
+    res.status(200).send('OK');
+  } catch (error) {
+    console.error("[3CX Webhook GET] Error processing webhook:", error);
+    res.status(500).send('Error');
+  }
+});
+
 router.post('/3cx', async (req: Request, res: Response) => {
   try {
     const { event, extension, callId, timestamp } = req.body;
 
-    console.log(`[3CX Webhook] Received event: ${event} for extension ${extension}`);
+    console.log(`[3CX Webhook POST] Received event: ${event} for extension ${extension}`);
 
     // Update operator status based on event
     if (event === "call_answered") {
-      // Operator picked up a call - mark as Busy
       tcxMonitor.updateOperatorStatus(extension, "Busy");
     } else if (event === "call_ended") {
-      // Call ended - mark as Available
       tcxMonitor.updateOperatorStatus(extension, "Available");
+    } else if (event === "call_ringing") {
+      tcxMonitor.updateOperatorStatus(extension, "Ringing");
     }
 
     res.json({ success: true, received: { event, extension, callId } });
   } catch (error) {
-    console.error("[3CX Webhook] Error processing webhook:", error);
+    console.error("[3CX Webhook POST] Error processing webhook:", error);
     res.status(500).json({ success: false, error: "Internal server error" });
   }
 });
