@@ -215,7 +215,7 @@ export default function QueueSettings() {
               <p className="font-medium text-blue-900">How it works</p>
               <p className="text-sm text-blue-800">
                 The queue processor automatically picks up phone numbers from the queue and initiates calls 
-                using the configured ElevenLabs agents. You can adjust the number of parallel calls based on 
+                using the configured agents. You can adjust the number of parallel calls based on 
                 your needs and available resources. The processor will continue running until manually stopped 
                 or all queue items are processed.
               </p>

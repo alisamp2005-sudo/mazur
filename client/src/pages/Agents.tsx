@@ -81,7 +81,7 @@ export default function Agents() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Agents</h1>
-          <p className="text-muted-foreground mt-2">Manage your ElevenLabs AI agents</p>
+          <p className="text-muted-foreground mt-2">Manage your AI agents</p>
         </div>
         <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
           <DialogTrigger asChild>
@@ -94,12 +94,12 @@ export default function Agents() {
             <form onSubmit={handleCreate}>
               <DialogHeader>
                 <DialogTitle>Create New Agent</DialogTitle>
-                <DialogDescription>Add a new ElevenLabs agent configuration</DialogDescription>
+                <DialogDescription>Add a new agent configuration</DialogDescription>
               </DialogHeader>
               <div className="space-y-4 py-4">
                 <div className="space-y-2">
                   <Label htmlFor="agentId">Agent ID *</Label>
-                  <Input id="agentId" name="agentId" placeholder="Enter ElevenLabs Agent ID" required />
+                  <Input id="agentId" name="agentId" placeholder="Enter Agent ID" required />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="phoneNumberId">Phone Number ID *</Label>
