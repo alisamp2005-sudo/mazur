@@ -3,7 +3,7 @@ import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Upload, Phone, Trash2, PlayCircle } from "lucide-react";
+import { Upload, Phone, Trash2, PlayCircle, Play, Square } from "lucide-react";
 import { toast } from "sonner";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -17,6 +17,12 @@ export default function PhoneNumbers() {
   const [queueDialogOpen, setQueueDialogOpen] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const { data: queueStatus } = trpc.queue.status.useQuery(undefined, {
+    refetchInterval: 2000, // Refresh every 2 seconds
+  });
+  const startQueueMutation = trpc.queue.start.useMutation();
+  const stopQueueMutation = trpc.queue.stop.useMutation();
 
   const { data: phoneData, isLoading, refetch } = trpc.phoneNumbers.list.useQuery({ limit: 100, offset: 0 });
   const { data: agents } = trpc.agents.list.useQuery();
@@ -132,14 +138,59 @@ export default function PhoneNumbers() {
     }
   };
 
+  const handleStartQueue = async () => {
+    try {
+      await startQueueMutation.mutateAsync();
+      toast.success("Queue processor started");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to start queue");
+    }
+  };
+
+  const handleStopQueue = async () => {
+    if (!confirm("Stop queue processor? Active calls will continue but no new calls will be initiated.")) return;
+    
+    try {
+      await stopQueueMutation.mutateAsync();
+      toast.success("Queue processor stopped");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to stop queue");
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Batch Calls</h1>
           <p className="text-muted-foreground mt-2">Upload phone numbers and run batch calling campaigns</p>
+          {queueStatus && (
+            <div className="mt-2 flex items-center gap-2">
+              <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                queueStatus.isRunning ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+              }`}>
+                {queueStatus.isRunning ? 'Running' : 'Stopped'}
+              </span>
+              <span className="text-sm text-muted-foreground">
+                {queueStatus.activeWorkers}/{queueStatus.maxConcurrent} active calls
+              </span>
+            </div>
+          )}
         </div>
         <div className="flex gap-2">
+          {queueStatus && (
+            queueStatus.isRunning ? (
+              <Button variant="outline" onClick={handleStopQueue}>
+                <Square className="h-4 w-4 mr-2" />
+                Stop Queue
+              </Button>
+            ) : (
+              <Button variant="outline" onClick={handleStartQueue}>
+                <Play className="h-4 w-4 mr-2" />
+                Start Queue
+              </Button>
+            )
+          )}
           {selectedNumbers.length > 0 && (
             <>
               <Button variant="outline" onClick={() => setQueueDialogOpen(true)}>

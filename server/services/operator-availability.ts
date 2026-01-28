@@ -3,7 +3,7 @@
  * 
  * Provides simple operator availability checking for ElevenLabs AI agents.
  * Since 3CX Professional doesn't provide real-time API access, we use a simple approach:
- * - Track active transfers to Ring Group 8000
+ * - Track active transfers to Ring Group 801
  * - Assume max 4 operators (1000, 2000, 3000, 4000)
  * - Return availability based on active transfer count
  */
@@ -23,7 +23,7 @@ class OperatorAvailabilityService {
 
   /**
    * Register a new transfer to operators
-   * Call this when AI transfers a call to Ring Group 8000
+   * Call this when AI transfers a call to Ring Group 801
    */
   registerTransfer(callId: string): void {
     this.activeTransfers.add(callId);

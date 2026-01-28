@@ -89,22 +89,22 @@ If isAnyAvailable is false (all operators busy):
   c) "I can try to help you myself - what do you need assistance with?"
 
 If isAnyAvailable is true:
-- Proceed with transfer to extension 8000
+- Proceed with transfer to extension 801
 - Say: "Let me transfer you to one of our operators right away"
 
 After successful transfer:
 - The system will automatically connect to the first available operator
-- Ring Group 8000 will ring all 4 operators simultaneously
+- Ring Group 801 will ring all 4 operators simultaneously
 - Whoever answers first gets the call
 ```
 
 ### 3. Transfer Configuration
 
-**Transfer Destination:** `8000` (Ring Group for all operators)
+**Transfer Destination:** `801` (Ring Group for all operators)
 
 **Transfer Type:** Warm Transfer (recommended) or Blind Transfer
 
-**Operators in Ring Group 8000:**
+**Operators in Ring Group 801:**
 - Extension 1000: Slobodan Starn
 - Extension 2000: Operator 2000
 - Extension 3000: Operator 3000
@@ -121,7 +121,7 @@ Customer: "I need to speak with someone"
 AI: [calls check_operator_availability]
 AI: [receives isAnyAvailable: true]
 AI: "Of course! Let me transfer you to one of our operators right away."
-AI: [transfers to 8000]
+AI: [transfers to 801]
 → All 4 operators ring
 → First to answer gets the call
 → Batch calls continue normally
@@ -137,7 +137,7 @@ AI: "All our operators are currently assisting other customers. Would you like t
 
 Customer: "I'll hold"
 AI: "Perfect, please hold while I connect you."
-AI: [transfers to 8000 - customer hears hold music]
+AI: [transfers to 801 - customer hears hold music]
 → Queue Manager automatically PAUSES batch calls
 → System monitors operator availability every 10 seconds
 → When operator becomes free, call connects
@@ -205,10 +205,10 @@ From the admin panel:
 
 ### Transfer fails
 
-- Verify Ring Group 8000 exists in 3CX
+- Verify Ring Group 801 exists in 3CX
 - Check all 4 operators are added to the group
 - Verify Ring Strategy is set to "Ring All"
-- Test manual transfer to 8000 from 3CX
+- Test manual transfer to 801 from 3CX
 
 ### Queue doesn't pause when all busy
 

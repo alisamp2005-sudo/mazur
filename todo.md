@@ -136,7 +136,7 @@
 - [x] Make test call to +17183882216
 
 ## 3CX Automatic Integration
-- [x] Create Ring Group in 3CX for operators (Extension 8000)
+- [x] Create Ring Group in 3CX for operators (Extension 801)
 - [x] Create webhook endpoint /api/webhook/3cx for receiving operator status updates
 - [x] Create API endpoint to check operator availability for ElevenLabs
 - [x] Implement waiting queue system for clients when all operators busy
@@ -146,16 +146,16 @@
 - [x] Test complete workflow with real calls (unit tests passed, ready for integration testing)
 
 ## Full System Integration
-- [x] Configure 3CX Ring Group 8000 settings (hold music, timeout, etc)
+- [x] Configure 3CX Ring Group 801 settings (hold music, timeout, etc)
 - [x] Configure ElevenLabs agent with Custom Tool for operator availability check
 - [x] Update ElevenLabs agent prompt with transfer instructions
-- [ ] Set transfer destination in ElevenLabs agent to Ring Group 8000 (manual setup by user)
+- [ ] Set transfer destination in ElevenLabs agent to Ring Group 801 (manual setup by user)
 - [x] Activate Queue Manager in admin panel
 - [ ] Test full workflow: AI call → operator check → transfer → queue management
 
 ## DID Routing and Transfer Setup
 - [x] Review additional redirect settings from user
-- [x] Configure transfer in ElevenLabs using SIP URI (sip:8000@clientservicesltd.3cx.agency)
+- [x] Configure transfer in ElevenLabs using SIP URI (sip:801@clientservicesltd.3cx.agency)
 - [ ] Test full workflow with real call transfer
 
 ## Single Call Feature
@@ -176,3 +176,40 @@
 - [x] Fix "Failed to initiate call" error on Make a Call page
 - [x] Changed API endpoint from Twilio to SIP Trunk
 - [x] Updated response interface to support sip_call_id
+
+## Authentication & Security
+- [ ] Implement login page with email/password authentication
+- [ ] Add authentication middleware to protect all admin routes
+- [ ] Create admin user with credentials: admin@odmen.adm / AHShbdb3434HShs36!@
+- [ ] Remove Manus OAuth integration (replace with custom auth)
+## Ring Group Configuration Update
+- [x] Change Ring Group from 8000 to 801 in all code
+- [x] Update Custom Tool configuration for operator availability check
+- [x] Update database references to Ring Group
+- [x] Update SIP URI from sip:8000@... to sip:801@...
+## VPS Deployment
+- [ ] Connect to VPS (150.241.230.244)
+- [ ] Install Node.js, pnpm, and dependencies on VPS
+- [ ] Setup MySQL database on VPS
+- [ ] Configure environment variables on VPS
+- [ ] Setup Nginx reverse proxy
+- [ ] Configure SSL certificate (Let's Encrypt)
+- [ ] Deploy application code to VPS
+- [ ] Start application with PM2
+- [ ] Configure firewall rules
+
+## Final Testing on VPS
+- [ ] Test call distribution to Ring Group 801
+- [ ] Test Queue Manager pause functionality when operators busy
+- [ ] Test authentication flow (login/logout)
+- [ ] Verify all admin pages require authentication
+- [ ] Test full call workflow from admin panel to 3CX transfer
+
+## Batch Calls Control UI
+- [x] Add Start/Stop buttons to Batch Calls page
+- [x] Add manual pause/resume functionality for batch calls
+- [x] Display current batch calling status (running/paused/stopped)
+- [x] Add visual indicators for batch calling state
+- [x] Connect Start button to queue processor start endpoint
+- [x] Connect Stop button to queue processor stop endpoint
+- [x] Add confirmation dialogs for Start/Stop actions

@@ -5,7 +5,7 @@ This guide explains how to configure call transfer functionality in your ElevenL
 
 ## Prerequisites
 - ✅ ElevenLabs agent "TESTED" (agent_8301kfgw54f5eekabw8htz6ekgnw)
-- ✅ 3CX Ring Group 8000 configured with operators 1000, 2000, 3000, 4000
+- ✅ 3CX Ring Group 801 configured with operators 1000, 2000, 3000, 4000
 - ✅ Ring Group strategy: Ring All (first to answer gets the call)
 - ✅ Custom Tool configured for operator availability check
 - ✅ Original agent prompt restored with transfer logic
@@ -22,7 +22,7 @@ Look for the "Transfer" or "Call Transfer" section in the agent configuration.
 **Settings:**
 - **Transfer Type**: `Conference`
 - **Destination Type**: `SIP URI`
-- **SIP URI**: `sip:8000@clientservicesltd.3cx.agency`
+- **SIP URI**: `sip:801@clientservicesltd.3cx.agency`
 - **Transfer Condition**: `customer wants to speak with operator` or `true`
 
 ### Step 3: Verify Configuration
@@ -40,8 +40,8 @@ Make sure all settings are saved. The agent will now be able to transfer calls t
 3. **Before transfer**, agent calls Custom Tool to check operator availability
 4. **If operators available**:
    - Agent says: "No problem, let me get you over to our senior fraud advisor right now. They'll be able to help you with that. One moment please."
-   - Agent transfers call to `sip:8000@clientservicesltd.3cx.agency`
-   - 3CX Ring Group 8000 rings all 4 operators simultaneously
+   - Agent transfers call to `sip:801@clientservicesltd.3cx.agency`
+   - 3CX Ring Group 801 rings all 4 operators simultaneously
    - First operator to answer gets the call
 5. **If all operators busy**:
    - Queue Manager automatically pauses batch calls
@@ -76,7 +76,7 @@ Transfer when:
    - Asking questions the AI can't answer
 
 ### Verify Transfer
-1. Call should be transferred to Ring Group 8000
+1. Call should be transferred to Ring Group 801
 2. All 4 operators (1000, 2000, 3000, 4000) should ring simultaneously
 3. First operator to answer gets the call
 4. Check call logs in admin panel for transfer status
@@ -84,9 +84,9 @@ Transfer when:
 ## Troubleshooting
 
 ### Transfer Not Working
-- Verify SIP URI is correct: `sip:8000@clientservicesltd.3cx.agency`
-- Check that Ring Group 8000 exists in 3CX
-- Verify operators 1000, 2000, 3000, 4000 are members of Ring Group 8000
+- Verify SIP URI is correct: `sip:801@clientservicesltd.3cx.agency`
+- Check that Ring Group 801 exists in 3CX
+- Verify operators 1000, 2000, 3000, 4000 are members of Ring Group 801
 - Check 3CX logs for incoming SIP calls
 
 ### Operators Not Ringing
