@@ -209,9 +209,12 @@
 
 ## Batch Calls Control UI
 - [x] Add Start/Stop buttons to Batch Calls page
+- [x] Add Pause/Resume buttons to Batch Calls page
 - [x] Add manual pause/resume functionality for batch calls
 - [x] Display current batch calling status (running/paused/stopped)
-- [x] Add visual indicators for batch calling state
+- [x] Add visual indicators for batch calling state (Running/Paused/Stopped)
 - [x] Connect Start button to queue processor start endpoint
+- [x] Connect Pause button to queue processor pause endpoint
+- [x] Connect Resume button to queue processor resume endpoint
 - [x] Connect Stop button to queue processor stop endpoint
-- [x] Add confirmation dialogs for Start/Stop actions
+- [x] Add pause/resume endpoints to backend queue router

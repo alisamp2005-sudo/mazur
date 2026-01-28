@@ -354,7 +354,7 @@ export const appRouter = router({
     status: protectedProcedure.query(() => {
       const processor = getQueueProcessor();
       if (!processor) {
-        return { isRunning: false, activeWorkers: 0, maxConcurrent: 3, maxAllowed: 15 };
+        return { isRunning: false, isPaused: false, activeWorkers: 0, maxConcurrent: 3, maxAllowed: 15 };
       }
       return processor.getStatus();
     }),
@@ -381,6 +381,30 @@ export const appRouter = router({
       }
       processor.stop();
       return { success: true, message: 'Queue processor stopped' };
+    }),
+
+    pause: protectedProcedure.mutation(() => {
+      const processor = getQueueProcessor();
+      if (!processor) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Queue processor not initialized',
+        });
+      }
+      processor.pause();
+      return { success: true, message: 'Queue processor paused' };
+    }),
+
+    resume: protectedProcedure.mutation(() => {
+      const processor = getQueueProcessor();
+      if (!processor) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Queue processor not initialized',
+        });
+      }
+      processor.resume();
+      return { success: true, message: 'Queue processor resumed' };
     }),
 
     setMaxConcurrent: protectedProcedure

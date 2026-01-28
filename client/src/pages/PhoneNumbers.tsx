@@ -23,6 +23,8 @@ export default function PhoneNumbers() {
   });
   const startQueueMutation = trpc.queue.start.useMutation();
   const stopQueueMutation = trpc.queue.stop.useMutation();
+  const pauseQueueMutation = trpc.queue.pause.useMutation();
+  const resumeQueueMutation = trpc.queue.resume.useMutation();
 
   const { data: phoneData, isLoading, refetch } = trpc.phoneNumbers.list.useQuery({ limit: 100, offset: 0 });
   const { data: agents } = trpc.agents.list.useQuery();
@@ -158,6 +160,24 @@ export default function PhoneNumbers() {
     }
   };
 
+  const handlePauseQueue = async () => {
+    try {
+      await pauseQueueMutation.mutateAsync();
+      toast.success("Queue paused");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to pause queue");
+    }
+  };
+
+  const handleResumeQueue = async () => {
+    try {
+      await resumeQueueMutation.mutateAsync();
+      toast.success("Queue resumed");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to resume queue");
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -179,17 +199,36 @@ export default function PhoneNumbers() {
         </div>
         <div className="flex gap-2">
           {queueStatus && (
-            queueStatus.isRunning ? (
-              <Button variant="outline" onClick={handleStopQueue}>
-                <Square className="h-4 w-4 mr-2" />
-                Stop Queue
-              </Button>
-            ) : (
-              <Button variant="outline" onClick={handleStartQueue}>
-                <Play className="h-4 w-4 mr-2" />
-                Start Queue
-              </Button>
-            )
+            <>
+              {!queueStatus.isRunning ? (
+                <Button variant="outline" onClick={handleStartQueue}>
+                  <Play className="h-4 w-4 mr-2" />
+                  Start Queue
+                </Button>
+              ) : queueStatus.isPaused ? (
+                <>
+                  <Button variant="outline" onClick={handleResumeQueue}>
+                    <Play className="h-4 w-4 mr-2" />
+                    Resume
+                  </Button>
+                  <Button variant="outline" onClick={handleStopQueue}>
+                    <Square className="h-4 w-4 mr-2" />
+                    Stop
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button variant="outline" onClick={handlePauseQueue}>
+                    <Square className="h-4 w-4 mr-2" />
+                    Pause
+                  </Button>
+                  <Button variant="outline" onClick={handleStopQueue}>
+                    <Square className="h-4 w-4 mr-2" />
+                    Stop
+                  </Button>
+                </>
+              )}
+            </>
           )}
           {selectedNumbers.length > 0 && (
             <>
