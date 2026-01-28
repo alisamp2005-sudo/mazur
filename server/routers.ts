@@ -383,6 +383,30 @@ export const appRouter = router({
       return { success: true, message: 'Queue processor stopped' };
     }),
 
+    pause: protectedProcedure.mutation(() => {
+      const processor = getQueueProcessor();
+      if (!processor) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Queue processor not initialized',
+        });
+      }
+      processor.pause();
+      return { success: true, message: 'Queue processor paused' };
+    }),
+
+    resume: protectedProcedure.mutation(() => {
+      const processor = getQueueProcessor();
+      if (!processor) {
+        throw new TRPCError({
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Queue processor not initialized',
+        });
+      }
+      processor.resume();
+      return { success: true, message: 'Queue processor resumed' };
+    }),
+
     setMaxConcurrent: protectedProcedure
       .input(z.object({ max: z.number().min(1).max(15) }))
       .mutation(({ input }) => {
