@@ -438,7 +438,7 @@ export const appRouter = router({
         return await db.createCallRating({
           ...input,
           evaluationType: 'manual',
-          evaluatedBy: ctx.user?.openId || 'unknown',
+          evaluatedBy: ctx.user?.email || 'unknown',
         });
       }),
 
@@ -581,7 +581,7 @@ Respond in JSON format with keys: overallRating, clarityScore, engagementScore, 
           firstMessage: input.firstMessage,
           description: input.description,
           isActive: false,
-          createdBy: ctx.user?.openId || 'unknown',
+          createdBy: ctx.user?.email || 'unknown',
         });
       }),
 

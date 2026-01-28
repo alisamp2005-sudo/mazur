@@ -1,7 +1,8 @@
 import { eq, desc, and, inArray, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { 
-  InsertUser, 
+  InsertUser,
+  User,
   users, 
   agents, 
   Agent, 
@@ -43,53 +44,46 @@ export async function getDb() {
 
 // ============ User Management ============
 
-export async function upsertUser(user: InsertUser): Promise<void> {
-  if (!user.openId) {
-    throw new Error("User openId is required for upsert");
+export async function createUser(user: InsertUser): Promise<User> {
+  if (!user.email || !user.passwordHash) {
+    throw new Error("Email and password hash are required");
   }
 
   const db = await getDb();
   if (!db) {
-    console.warn("[Database] Cannot upsert user: database not available");
-    return;
+    throw new Error("Database not available");
   }
 
   try {
     const values: InsertUser = {
-      openId: user.openId,
       email: user.email,
+      passwordHash: user.passwordHash,
+      name: user.name ?? null,
+      role: user.role ?? "user",
+      lastSignedIn: new Date(),
     };
-    const updateSet: Record<string, unknown> = {};
 
-    if (user.name !== undefined) {
-      values.name = user.name ?? null;
-      updateSet.name = user.name ?? null;
-    }
-
-    if (user.lastSignedIn !== undefined) {
-      values.lastSignedIn = user.lastSignedIn;
-      updateSet.lastSignedIn = user.lastSignedIn;
-    }
-    
-    if (user.role !== undefined) {
-      values.role = user.role;
-      updateSet.role = user.role;
-    }
-
-    if (!values.lastSignedIn) {
-      values.lastSignedIn = new Date();
-    }
-
-    if (Object.keys(updateSet).length === 0) {
-      updateSet.lastSignedIn = new Date();
-    }
-
-    await db.insert(users).values(values).onDuplicateKeyUpdate({
-      set: updateSet,
-    });
+    const result = await db.insert(users).values(values);
+    const insertedUser = await getUserById(Number((result as any).insertId));
+    if (!insertedUser) throw new Error("Failed to retrieve created user");
+    return insertedUser;
   } catch (error) {
-    console.error("[Database] Failed to upsert user:", error);
+    console.error("[Database] Error creating user:", error);
     throw error;
+  }
+}
+
+export async function updateUserLastSignIn(userId: number): Promise<void> {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot update user: database not available");
+    return;
+  }
+
+  try {
+    await db.update(users).set({ lastSignedIn: new Date() }).where(eq(users.id, userId));
+  } catch (error) {
+    console.error("[Database] Error updating last sign in:", error);
   }
 }
 
@@ -115,16 +109,7 @@ export async function getUserById(id: number) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-export async function getUserByOpenId(openId: string) {
-  const db = await getDb();
-  if (!db) {
-    console.warn("[Database] Cannot get user: database not available");
-    return undefined;
-  }
 
-  const result = await db.select().from(users).where(eq(users.openId, openId)).limit(1);
-  return result.length > 0 ? result[0] : undefined;
-}
 
 // ============ Agent Management ============
 

@@ -180,10 +180,14 @@
 - [x] Updated response interface to support sip_call_id
 
 ## Authentication & Security
-- [ ] Implement login page with email/password authentication
-- [ ] Add authentication middleware to protect all admin routes
-- [ ] Create admin user with credentials: admin@odmen.adm / AHShbdb3434HShs36!@
-- [ ] Remove Manus OAuth integration (replace with custom auth)
+- [ ] Update users table schema (add email, passwordHash fields)
+- [ ] Create authentication backend (login, logout, verify endpoints)
+- [ ] Create login page frontend with email/password form
+- [ ] Remove Manus OAuth routes and dependencies
+- [ ] Update useAuth hook for new authentication
+- [ ] Create seed script for admin user (admin@odmen.adm / AHShbdb3434HShs36!@)
+- [ ] Test authentication flow locally
+- [ ] Deploy authentication to VPS
 ## Ring Group Configuration Update
 - [x] Change Ring Group from 8000 to 801 in all code
 - [x] Update Custom Tool configuration for operator availability check

@@ -13,10 +13,12 @@ import QueueSettings from "./pages/QueueSettings";
 import CallQuality from "./pages/CallQuality";
 import PromptManager from "./pages/PromptManager";
 import SingleCall from "./pages/SingleCall";
+import Login from "./pages/Login";
 
 function Router() {
   return (
     <Switch>
+      <Route path="/login" component={Login} />
       <Route path="/">
         <DashboardLayout>
           <Dashboard />
