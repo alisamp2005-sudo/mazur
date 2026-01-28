@@ -3,7 +3,7 @@ import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Upload, Phone, Trash2, PlayCircle, Play, Square, Pause } from "lucide-react";
+import { Upload, Phone, Trash2, PlayCircle, Play, Square } from "lucide-react";
 import { toast } from "sonner";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -23,8 +23,6 @@ export default function PhoneNumbers() {
   });
   const startQueueMutation = trpc.queue.start.useMutation();
   const stopQueueMutation = trpc.queue.stop.useMutation();
-  const pauseQueueMutation = trpc.queue.pause.useMutation();
-  const resumeQueueMutation = trpc.queue.resume.useMutation();
 
   const { data: phoneData, isLoading, refetch } = trpc.phoneNumbers.list.useQuery({ limit: 100, offset: 0 });
   const { data: agents } = trpc.agents.list.useQuery();
@@ -160,24 +158,6 @@ export default function PhoneNumbers() {
     }
   };
 
-  const handlePauseQueue = async () => {
-    try {
-      await pauseQueueMutation.mutateAsync();
-      toast.success("Queue processor paused");
-    } catch (error: any) {
-      toast.error(error.message || "Failed to pause queue");
-    }
-  };
-
-  const handleResumeQueue = async () => {
-    try {
-      await resumeQueueMutation.mutateAsync();
-      toast.success("Queue processor resumed");
-    } catch (error: any) {
-      toast.error(error.message || "Failed to resume queue");
-    }
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -187,11 +167,9 @@ export default function PhoneNumbers() {
           {queueStatus && (
             <div className="mt-2 flex items-center gap-2">
               <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                !queueStatus.isRunning ? 'bg-gray-100 text-gray-800' :
-                queueStatus.isPaused ? 'bg-yellow-100 text-yellow-800' :
-                'bg-green-100 text-green-800'
+                queueStatus.isRunning ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
               }`}>
-                {!queueStatus.isRunning ? 'Stopped' : queueStatus.isPaused ? 'Paused' : 'Running'}
+                {queueStatus.isRunning ? 'Running' : 'Stopped'}
               </span>
               <span className="text-sm text-muted-foreground">
                 {queueStatus.activeWorkers}/{queueStatus.maxConcurrent} active calls
@@ -201,32 +179,17 @@ export default function PhoneNumbers() {
         </div>
         <div className="flex gap-2">
           {queueStatus && (
-            <>
-              {queueStatus.isRunning ? (
-                <>
-                  {queueStatus.isPaused ? (
-                    <Button variant="outline" onClick={handleResumeQueue}>
-                      <Play className="h-4 w-4 mr-2" />
-                      Resume
-                    </Button>
-                  ) : (
-                    <Button variant="outline" onClick={handlePauseQueue}>
-                      <Pause className="h-4 w-4 mr-2" />
-                      Pause
-                    </Button>
-                  )}
-                  <Button variant="outline" onClick={handleStopQueue}>
-                    <Square className="h-4 w-4 mr-2" />
-                    Stop
-                  </Button>
-                </>
-              ) : (
-                <Button variant="outline" onClick={handleStartQueue}>
-                  <Play className="h-4 w-4 mr-2" />
-                  Start Queue
-                </Button>
-              )}
-            </>
+            queueStatus.isRunning ? (
+              <Button variant="outline" onClick={handleStopQueue}>
+                <Square className="h-4 w-4 mr-2" />
+                Stop Queue
+              </Button>
+            ) : (
+              <Button variant="outline" onClick={handleStartQueue}>
+                <Play className="h-4 w-4 mr-2" />
+                Start Queue
+              </Button>
+            )
           )}
           {selectedNumbers.length > 0 && (
             <>
