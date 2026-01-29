@@ -64,6 +64,13 @@
       "when": 1769632733827,
       "tag": "0008_soft_lord_tyger",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "5",
+      "when": 1769666242492,
+      "tag": "0009_solid_blazing_skull",
+      "breakpoints": true
     }
   ]
 }

@@ -1,3 +1,4 @@
+import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -165,6 +166,91 @@ export function QueueManagerPanel() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Active Extensions Configuration */}
+      <ActiveExtensionsConfig />
     </div>
+  );
+}
+
+// Active Extensions Configuration Component
+function ActiveExtensionsConfig() {
+  const AVAILABLE_EXTENSIONS = ['1000', '2000', '3000', '4000'];
+  const [activeExtensions, setActiveExtensions] = React.useState<string[]>([]);
+
+  const { data, refetch } = trpc.settings.getActiveExtensions.useQuery();
+  const saveMutation = trpc.settings.setActiveExtensions.useMutation({
+    onSuccess: () => {
+      toast.success("Active extensions updated");
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(`Failed to update: ${error.message}`);
+    },
+  });
+
+  React.useEffect(() => {
+    if (data?.extensions) {
+      const exts = data.extensions.split(',').map(e => e.trim()).filter(Boolean);
+      setActiveExtensions(exts);
+    }
+  }, [data]);
+
+  const toggleExtension = (ext: string) => {
+    const newActive = activeExtensions.includes(ext)
+      ? activeExtensions.filter(e => e !== ext)
+      : [...activeExtensions, ext];
+    setActiveExtensions(newActive);
+    saveMutation.mutate({ extensions: newActive.join(',') });
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Users className="h-5 w-5" />
+          Active Extensions
+        </CardTitle>
+        <CardDescription>
+          Configure which 3CX extensions to monitor for availability
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+          <div className="space-y-3">
+            {AVAILABLE_EXTENSIONS.map((ext) => {
+              const isActive = activeExtensions.includes(ext);
+              return (
+                <div key={ext} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className="font-mono font-medium text-lg">{ext}</div>
+                    <Badge variant={isActive ? "default" : "outline"}>
+                      {isActive ? "Active" : "Inactive"}
+                    </Badge>
+                  </div>
+                  <button
+                    onClick={() => toggleExtension(ext)}
+                    disabled={saveMutation.isPending}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+                      isActive ? 'bg-blue-600' : 'bg-gray-200'
+                    } ${saveMutation.isPending ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                        isActive ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+          <div className="text-xs text-muted-foreground p-3 bg-yellow-50 dark:bg-yellow-950 rounded-lg">
+            <strong>Note:</strong> Only extensions listed here will be monitored. Unregistered
+            extensions will be ignored even if listed.
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

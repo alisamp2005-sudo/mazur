@@ -24,7 +24,10 @@ import {
   InsertCallRating,
   promptVersions,
   PromptVersion,
-  InsertPromptVersion
+  InsertPromptVersion,
+  settings,
+  Setting,
+  InsertSetting
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -487,4 +490,37 @@ export async function updatePromptVersionMetrics(versionId: number, metrics: { c
   if (metrics.successRate !== undefined) updateData.successRate = Math.round(metrics.successRate * 100);
 
   await db.update(promptVersions).set(updateData).where(eq(promptVersions.id, versionId));
+}
+
+
+// ============ Settings Management ============
+
+export async function getSetting(key: string): Promise<string | null> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.select().from(settings).where(eq(settings.key, key)).limit(1);
+  return result[0]?.value || null;
+}
+
+export async function setSetting(key: string, value: string, description?: string): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const existing = await db.select().from(settings).where(eq(settings.key, key)).limit(1);
+  
+  if (existing.length > 0) {
+    await db.update(settings)
+      .set({ value, description: description || existing[0].description })
+      .where(eq(settings.key, key));
+  } else {
+    await db.insert(settings).values({ key, value, description });
+  }
+}
+
+export async function getAllSettings(): Promise<Setting[]> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  return db.select().from(settings);
 }

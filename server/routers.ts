@@ -778,15 +778,46 @@ Respond in JSON format with keys: overallRating, clarityScore, engagementScore, 
       tcxQueueManager.start();
       return { success: true, message: '3CX-based queue management started' };
     }),
-
     stop: protectedProcedure.mutation(async () => {
       tcxQueueManager.stop();
       return { success: true, message: '3CX-based queue management stopped' };
     }),
-
     getStatus: protectedProcedure.query(async () => {
       return tcxQueueManager.getStatus();
     }),
+  }),
+
+  // ============ Settings Management ============
+  settings: router({
+    getActiveExtensions: protectedProcedure.query(async () => {
+      const value = await db.getSetting('active_extensions');
+      return { extensions: value || '1000' };
+    }),
+    
+    setActiveExtensions: protectedProcedure
+      .input(z.object({ extensions: z.string() }))
+      .mutation(async ({ input }) => {
+        // Validate format (comma-separated numbers)
+        const extensions = input.extensions.split(',').map(e => e.trim()).filter(e => e);
+        if (extensions.length === 0) {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'At least one extension is required' });
+        }
+        
+        // Validate each extension is numeric
+        for (const ext of extensions) {
+          if (!/^\d+$/.test(ext)) {
+            throw new TRPCError({ code: 'BAD_REQUEST', message: `Invalid extension format: ${ext}` });
+          }
+        }
+        
+        await db.setSetting('active_extensions', extensions.join(','), 'Active 3CX extensions to monitor');
+        
+        // Reload extensions in polling service
+        const { reloadActiveExtensions } = await import('./services/tcx-polling');
+        await reloadActiveExtensions();
+        
+        return { success: true, extensions: extensions.join(',') };
+      }),
   }),
 });
 

@@ -222,3 +222,18 @@
 - [x] Connect Resume button to queue processor resume endpoint
 - [x] Connect Stop button to queue processor stop endpoint
 - [x] Add pause/resume endpoints to backend queue router
+
+## 3CX Extension Registration Status Fix
+- [ ] Add active_extensions setting to database (comma-separated list)
+- [ ] Add API endpoint to get/set active extensions
+- [ ] Update tcx-polling.ts to only monitor extensions in active list
+- [ ] Add Active Extensions configuration UI in admin panel
+- [ ] Test with only extension 1000 active
+- [ ] Deploy fix to VPS
+
+## Active Extensions UI Redesign
+- [x] Change from text input to toggle buttons for extensions 1000, 2000, 3000, 4000
+- [x] Each extension shows Active/Inactive status with toggle switch
+- [x] Update backend to store array of active extensions
+- [x] Test toggle functionality locally
+- [x] Deploy to VPS

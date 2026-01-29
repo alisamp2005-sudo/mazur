@@ -75,6 +75,20 @@ async function startServer() {
     } else {
       console.warn('[QueueProcessor] ELEVENLABS_API_KEY not set, queue processor not started');
     }
+    
+    // Start 3CX-based queue manager if configured
+    const tcxApiUrl = process.env.TCX_API_URL || '';
+    const tcxApiKey = process.env.TCX_API_KEY || '';
+    if (tcxApiUrl && tcxApiKey) {
+      import('../services/tcx-queue-manager').then(({ tcxQueueManager }) => {
+        tcxQueueManager.start();
+        console.log('[3CX] Queue manager started with automatic operator monitoring');
+      }).catch(err => {
+        console.error('[3CX] Failed to start queue manager:', err.message);
+      });
+    } else {
+      console.warn('[3CX] TCX_API_URL or TCX_API_KEY not set, 3CX integration disabled');
+    }
   });
 }
 

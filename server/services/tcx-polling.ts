@@ -4,12 +4,13 @@
  */
 
 import axios from 'axios';
+import { getSetting } from '../db';
 
 const TCX_API_URL = process.env.TCX_API_URL || '';
 const TCX_API_KEY = process.env.TCX_API_KEY || '';
 
-// Extensions to monitor (1000, 2000, 3000, 4000)
-const MONITORED_EXTENSIONS = ['1000', '2000', '3000', '4000'];
+// Extensions to monitor - loaded from database settings
+let MONITORED_EXTENSIONS: string[] = ['1000']; // Default to extension 1000 only
 
 // Poll interval in milliseconds (10 seconds)
 const POLL_INTERVAL = 10000;
@@ -43,7 +44,34 @@ let statusChangeCallback: StatusChangeCallback | null = null;
 
 // Track current busy status for each extension
 const extensionStatus = new Map<string, boolean>();
-MONITORED_EXTENSIONS.forEach(ext => extensionStatus.set(ext, false));
+
+/**
+ * Load active extensions from database settings
+ */
+async function loadActiveExtensions(): Promise<void> {
+  try {
+    const activeExtensionsStr = await getSetting('active_extensions');
+    if (activeExtensionsStr) {
+      const extensions = activeExtensionsStr.split(',').map(e => e.trim()).filter(e => e);
+      if (extensions.length > 0) {
+        MONITORED_EXTENSIONS = extensions;
+        console.log('[3CX Polling] Loaded active extensions:', MONITORED_EXTENSIONS.join(', '));
+        
+        // Reset status map
+        extensionStatus.clear();
+        MONITORED_EXTENSIONS.forEach(ext => extensionStatus.set(ext, false));
+      }
+    } else {
+      // Set default if not configured
+      console.log('[3CX Polling] No active extensions configured, using default: 1000');
+      MONITORED_EXTENSIONS = ['1000'];
+      extensionStatus.clear();
+      extensionStatus.set('1000', false);
+    }
+  } catch (error) {
+    console.error('[3CX Polling] Failed to load active extensions:', error);
+  }
+}
 
 /**
  * Get OAuth2 access token
@@ -171,11 +199,14 @@ async function pollActiveCalls() {
 /**
  * Start polling
  */
-export function startPolling(callback?: StatusChangeCallback) {
+export async function startPolling(callback?: StatusChangeCallback) {
   if (isPolling) {
     console.log('[3CX Polling] Already polling');
     return;
   }
+
+  // Load active extensions from database
+  await loadActiveExtensions();
 
   console.log('[3CX Polling] Starting polling every', POLL_INTERVAL, 'ms');
   isPolling = true;
@@ -232,4 +263,20 @@ export function areAllExtensionsBusy(): boolean {
  */
 export function isAnyExtensionAvailable(): boolean {
   return MONITORED_EXTENSIONS.some(ext => extensionStatus.get(ext) === false);
+}
+
+
+/**
+ * Reload active extensions from database (call after updating settings)
+ */
+export async function reloadActiveExtensions(): Promise<void> {
+  await loadActiveExtensions();
+  console.log('[3CX Polling] Active extensions reloaded');
+}
+
+/**
+ * Get list of currently monitored extensions
+ */
+export function getMonitoredExtensions(): string[] {
+  return [...MONITORED_EXTENSIONS];
 }
