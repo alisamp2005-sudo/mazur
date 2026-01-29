@@ -41,8 +41,9 @@ export function QueueManagerPanel() {
     );
   }
 
-  const { isActive, operatorStatus, queueStatus } = status;
-  const { totalOperators, busyOperators, availableOperators, isAnyAvailable } = operatorStatus;
+  const { isActive, operators, queueStatus, autoManagement } = status;
+  const { total, available, busy, extensions } = operators;
+  const isAnyAvailable = available > 0;
 
   return (
     <div className="space-y-4">
@@ -101,18 +102,18 @@ export function QueueManagerPanel() {
             {/* Summary */}
             <div className="grid grid-cols-3 gap-4">
               <div className="text-center p-4 bg-muted rounded-lg">
-                <div className="text-2xl font-bold">{totalOperators}</div>
+                <div className="text-2xl font-bold">{total}</div>
                 <div className="text-sm text-muted-foreground">Total</div>
               </div>
               <div className="text-center p-4 bg-green-50 dark:bg-green-950 rounded-lg">
                 <div className="text-2xl font-bold text-green-600 dark:text-green-400">
-                  {availableOperators}
+                  {available}
                 </div>
                 <div className="text-sm text-muted-foreground">Available</div>
               </div>
               <div className="text-center p-4 bg-red-50 dark:bg-red-950 rounded-lg">
                 <div className="text-2xl font-bold text-red-600 dark:text-red-400">
-                  {busyOperators}
+                  {busy}
                 </div>
                 <div className="text-sm text-muted-foreground">Busy</div>
               </div>

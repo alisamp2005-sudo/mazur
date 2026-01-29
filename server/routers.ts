@@ -11,7 +11,7 @@ import { getQueueProcessor } from "./queueProcessor";
 import { tcxMonitor } from "./services/tcx-monitor";
 import { autoQueueManager } from './services/auto-queue-manager';
 import { operatorAvailability } from './services/operator-availability';
-import { queueManager } from './services/queue-manager';
+import { tcxQueueManager } from './services/tcx-queue-manager';
 
 export const appRouter = router({
   system: systemRouter,
@@ -772,25 +772,20 @@ Respond in JSON format with keys: overallRating, clarityScore, engagementScore, 
     }),
   }),
 
-  // ============ Integrated Queue Manager ============
+  // ============ 3CX Integrated Queue Manager ============
   queueManager: router({
     start: protectedProcedure.mutation(async () => {
-      queueManager.start();
-      return { success: true };
+      tcxQueueManager.start();
+      return { success: true, message: '3CX-based queue management started' };
     }),
 
     stop: protectedProcedure.mutation(async () => {
-      queueManager.stop();
-      return { success: true };
+      tcxQueueManager.stop();
+      return { success: true, message: '3CX-based queue management stopped' };
     }),
 
     getStatus: protectedProcedure.query(async () => {
-      return queueManager.getStatus();
-    }),
-
-    triggerCheck: protectedProcedure.mutation(async () => {
-      queueManager.triggerCheck();
-      return { success: true };
+      return tcxQueueManager.getStatus();
     }),
   }),
 });
