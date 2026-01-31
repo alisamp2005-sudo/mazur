@@ -89,6 +89,16 @@ async function startServer() {
     } else {
       console.warn('[3CX] TCX_API_URL or TCX_API_KEY not set, 3CX integration disabled');
     }
+    
+    // Start call monitoring for Telegram notifications
+    if (apiKey) {
+      import('../services/call-monitor').then(({ startCallMonitoring }) => {
+        startCallMonitoring(apiKey, 30000); // Check every 30 seconds
+        console.log('[CallMonitor] Started monitoring for completed calls');
+      }).catch(err => {
+        console.error('[CallMonitor] Failed to start:', err.message);
+      });
+    }
   });
 }
 

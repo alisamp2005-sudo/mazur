@@ -237,3 +237,15 @@
 - [x] Update backend to store array of active extensions
 - [x] Test toggle functionality locally
 - [x] Deploy to VPS
+
+## Telegram Bot Integration for Call Recordings
+- [x] Add Telegram bot settings to database (bot_token, chat_id)
+- [x] Create Telegram bot configuration UI in admin panel
+- [x] Install telegram bot library (node-telegram-bot-api)
+- [x] Create Telegram service module for sending messages
+- [x] Implement ElevenLabs API client to fetch call recordings
+- [x] Implement ElevenLabs API client to fetch call transcripts
+- [x] Create call monitoring service to check completed calls and send notifications
+- [x] Format message with: phone number, call time, transcript, audio file
+- [x] Test Telegram integration with unit tests
+- [ ] Deploy to VPS with Telegram bot token

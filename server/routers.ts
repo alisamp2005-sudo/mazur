@@ -818,6 +818,42 @@ Respond in JSON format with keys: overallRating, clarityScore, engagementScore, 
         
         return { success: true, extensions: extensions.join(',') };
       }),
+
+    // Telegram bot configuration
+    getTelegramConfig: protectedProcedure.query(async () => {
+      const botToken = await db.getSetting('telegram_bot_token');
+      const chatId = await db.getSetting('telegram_chat_id');
+      return {
+        botToken: botToken || '',
+        chatId: chatId || '',
+        isConfigured: !!(botToken && chatId)
+      };
+    }),
+
+    setTelegramConfig: protectedProcedure
+      .input(z.object({
+        botToken: z.string().min(1, 'Bot token is required'),
+        chatId: z.string().min(1, 'Chat ID is required'),
+      }))
+      .mutation(async ({ input }) => {
+        await db.setSetting('telegram_bot_token', input.botToken, 'Telegram bot token');
+        await db.setSetting('telegram_chat_id', input.chatId, 'Telegram chat ID for notifications');
+        
+        // Reinitialize bot
+        const { initTelegramBot } = await import('./services/telegram');
+        await initTelegramBot();
+        
+        return { success: true };
+      }),
+
+    testTelegramBot: protectedProcedure.mutation(async () => {
+      const { testTelegramBot } = await import('./services/telegram');
+      const result = await testTelegramBot();
+      if (!result.success) {
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR', message: result.message });
+      }
+      return result;
+    }),
   }),
 });
 
