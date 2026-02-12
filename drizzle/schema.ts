@@ -173,3 +173,78 @@ export const settings = mysqlTable("settings", {
 
 export type Setting = typeof settings.$inferSelect;
 export type InsertSetting = typeof settings.$inferInsert;
+
+/**
+ * Voximplant accounts for telephony integration
+ */
+export const voximplantAccounts = mysqlTable("voximplant_accounts", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(), // Owner of this Voximplant account
+  accountId: varchar("accountId", { length: 255 }).notNull(),
+  serviceAccountKeyId: varchar("serviceAccountKeyId", { length: 255 }).notNull(),
+  serviceAccountPrivateKey: text("serviceAccountPrivateKey").notNull(), // Encrypted
+  accountName: varchar("accountName", { length: 255 }),
+  isActive: boolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type VoximplantAccount = typeof voximplantAccounts.$inferSelect;
+export type InsertVoximplantAccount = typeof voximplantAccounts.$inferInsert;
+
+/**
+ * Voximplant applications linked to ElevenLabs agents
+ */
+export const voximplantApplications = mysqlTable("voximplant_applications", {
+  id: int("id").autoincrement().primaryKey(),
+  voximplantAccountId: int("voximplantAccountId").notNull(),
+  applicationId: varchar("applicationId", { length: 255 }).notNull(), // Voximplant Application ID
+  applicationName: varchar("applicationName", { length: 255 }).notNull(),
+  elevenlabsApiKey: text("elevenlabsApiKey").notNull(), // Encrypted
+  elevenlabsAgentId: varchar("elevenlabsAgentId", { length: 255 }).notNull(),
+  scenarioCode: text("scenarioCode"), // Generated JavaScript code
+  phoneNumber: varchar("phoneNumber", { length: 50 }),
+  status: mysqlEnum("status", ["active", "inactive"]).default("active").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type VoximplantApplication = typeof voximplantApplications.$inferSelect;
+export type InsertVoximplantApplication = typeof voximplantApplications.$inferInsert;
+
+/**
+ * Voximplant call history
+ */
+export const voximplantCalls = mysqlTable("voximplant_calls", {
+  id: int("id").autoincrement().primaryKey(),
+  applicationId: int("applicationId").notNull(), // voximplant_applications.id
+  callId: varchar("callId", { length: 255 }).notNull().unique(), // Voximplant call ID
+  conversationId: varchar("conversationId", { length: 255 }), // ElevenLabs conversation ID
+  fromNumber: varchar("fromNumber", { length: 50 }),
+  toNumber: varchar("toNumber", { length: 50 }).notNull(),
+  startTime: bigint("startTime", { mode: "number" }), // Unix timestamp in seconds
+  endTime: bigint("endTime", { mode: "number" }),
+  duration: int("duration"), // Duration in seconds
+  cost: int("cost"), // Cost in cents
+  status: mysqlEnum("status", ["answered", "failed", "busy", "no-answer"]).notNull(),
+  hasTranscript: boolean("hasTranscript").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type VoximplantCall = typeof voximplantCalls.$inferSelect;
+export type InsertVoximplantCall = typeof voximplantCalls.$inferInsert;
+
+/**
+ * Voximplant call transcripts from ElevenLabs
+ */
+export const voximplantTranscripts = mysqlTable("voximplant_transcripts", {
+  id: int("id").autoincrement().primaryKey(),
+  callId: int("callId").notNull(), // voximplant_calls.id
+  conversationId: varchar("conversationId", { length: 255 }).notNull(),
+  transcriptData: text("transcriptData").notNull(), // JSON string with full transcript
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type VoximplantTranscript = typeof voximplantTranscripts.$inferSelect;
+export type InsertVoximplantTranscript = typeof voximplantTranscripts.$inferInsert;

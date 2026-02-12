@@ -15,6 +15,10 @@ import PromptManager from "./pages/PromptManager";
 import SingleCall from "./pages/SingleCall";
 import TelegramSettings from "./pages/TelegramSettings";
 import Login from "./pages/Login";
+import VoximplantSetup from "./pages/voximplant/Setup";
+import VoximplantApplications from "./pages/voximplant/Applications";
+import VoximplantCallHistory from "./pages/voximplant/CallHistory";
+import VoximplantStatistics from "./pages/voximplant/Statistics";
 
 function Router() {
   return (
@@ -63,6 +67,26 @@ function Router() {
       <Route path="/telegram-settings">
         <DashboardLayout>
           <TelegramSettings />
+        </DashboardLayout>
+      </Route>
+      <Route path="/voximplant/setup">
+        <DashboardLayout>
+          <VoximplantSetup />
+        </DashboardLayout>
+      </Route>
+      <Route path="/voximplant/applications">
+        <DashboardLayout>
+          <VoximplantApplications />
+        </DashboardLayout>
+      </Route>
+      <Route path="/voximplant/call-history">
+        <DashboardLayout>
+          <VoximplantCallHistory />
+        </DashboardLayout>
+      </Route>
+      <Route path="/voximplant/statistics">
+        <DashboardLayout>
+          <VoximplantStatistics />
         </DashboardLayout>
       </Route>
       <Route path="/404" component={NotFound} />

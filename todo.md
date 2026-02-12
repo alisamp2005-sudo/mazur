@@ -249,3 +249,28 @@
 - [x] Format message with: phone number, call time, transcript, audio file
 - [x] Test Telegram integration with unit tests
 - [ ] Deploy to VPS with Telegram bot token
+
+
+## Voximplant Integration Module
+- [x] Create voximplant_accounts table in schema
+- [x] Create voximplant_applications table in schema
+- [x] Create voximplant_calls table in schema
+- [x] Create voximplant_transcripts table in schema
+- [x] Run database migration for Voximplant tables
+- [x] Create Voximplant API client wrapper (server/voximplant-api.ts)
+- [x] Add Voximplant account CRUD endpoints
+- [x] Add Voximplant applications CRUD endpoints
+- [x] Add JavaScript scenario code generator
+- [x] Add call history sync from Voximplant API
+- [x] Add transcript fetch from ElevenLabs for Voximplant calls
+- [x] Add statistics calculation for Voximplant calls
+- [x] Create Voximplant Setup page (account credentials)
+- [x] Create Voximplant Applications list page
+- [x] Create Application create/edit form
+- [x] Add scenario code generator with copy button
+- [x] Create Voximplant Call History page
+- [x] Create Voximplant Transcript viewer
+- [x] Create Voximplant Statistics dashboard
+- [x] Add Voximplant section to sidebar navigation
+- [x] Add real-time updates for active Voximplant calls (polling/WebSocket)
+- [ ] Test Voximplant integration end-to-end

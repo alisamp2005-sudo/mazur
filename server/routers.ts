@@ -12,9 +12,11 @@ import { tcxMonitor } from "./services/tcx-monitor";
 import { autoQueueManager } from './services/auto-queue-manager';
 import { operatorAvailability } from './services/operator-availability';
 import { tcxQueueManager } from './services/tcx-queue-manager';
+import { voximplantRouter } from './routers/voximplant';
 
 export const appRouter = router({
   system: systemRouter,
+  voximplant: voximplantRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

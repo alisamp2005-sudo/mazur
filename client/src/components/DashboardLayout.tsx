@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/sidebar";
 import { getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { LayoutDashboard, LogOut, PanelLeft, Users, Phone, PhoneCall, Settings, Star, FileText, MessageSquare } from "lucide-react";
+import { LayoutDashboard, LogOut, PanelLeft, Users, Phone, PhoneCall, Settings, Star, FileText, MessageSquare, Headphones, BarChart3 } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
@@ -38,6 +38,13 @@ const menuItems = [
   { icon: FileText, label: "Prompt Manager", path: "/prompt-manager" },
   { icon: Settings, label: "Queue Settings", path: "/queue-settings" },
   { icon: MessageSquare, label: "Telegram", path: "/telegram-settings" },
+];
+
+const voximplantMenuItems = [
+  { icon: Settings, label: "Setup", path: "/voximplant/setup" },
+  { icon: Headphones, label: "Applications", path: "/voximplant/applications" },
+  { icon: PhoneCall, label: "Call History", path: "/voximplant/call-history" },
+  { icon: BarChart3, label: "Statistics", path: "/voximplant/statistics" },
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";
@@ -189,6 +196,33 @@ function DashboardLayoutContent({
           <SidebarContent className="gap-0">
             <SidebarMenu className="px-2 py-1">
               {menuItems.map(item => {
+                const isActive = location === item.path;
+                return (
+                  <SidebarMenuItem key={item.path}>
+                    <SidebarMenuButton
+                      isActive={isActive}
+                      onClick={() => setLocation(item.path)}
+                      tooltip={item.label}
+                      className={`h-10 transition-all font-normal`}
+                    >
+                      <item.icon
+                        className={`h-4 w-4 ${isActive ? "text-primary" : ""}`}
+                      />
+                      <span>{item.label}</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+
+            {/* Voximplant Section */}
+            <div className="px-4 py-2 mt-4">
+              <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                Voximplant
+              </div>
+            </div>
+            <SidebarMenu className="px-2 py-1">
+              {voximplantMenuItems.map(item => {
                 const isActive = location === item.path;
                 return (
                   <SidebarMenuItem key={item.path}>
