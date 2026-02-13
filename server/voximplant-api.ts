@@ -5,9 +5,7 @@
 
 interface VoximplantCredentials {
   accountId: string;
-  apiKey?: string;
-  serviceAccountKeyId?: string;
-  serviceAccountPrivateKey?: string;
+  apiKey: string;
 }
 
 interface VoximplantCallHistoryItem {
@@ -37,16 +35,8 @@ async function makeVoximplantRequest(
     account_id: credentials.accountId,
   });
 
-  // Add authentication
-  if (credentials.apiKey) {
-    queryParams.append('api_key', credentials.apiKey);
-  } else if (credentials.serviceAccountKeyId && credentials.serviceAccountPrivateKey) {
-    // TODO: Implement JWT token generation for Service Account auth
-    // For now, require API key
-    throw new Error('Service Account authentication not yet implemented. Please use API key.');
-  } else {
-    throw new Error('No authentication credentials provided');
-  }
+  // Add API key authentication
+  queryParams.append('api_key', credentials.apiKey);
 
   const url = `${baseUrl}/${method}/?${queryParams.toString()}`;
   

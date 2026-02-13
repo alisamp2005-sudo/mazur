@@ -181,8 +181,7 @@ export const voximplantAccounts = mysqlTable("voximplant_accounts", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull(), // Owner of this Voximplant account
   accountId: varchar("accountId", { length: 255 }).notNull(),
-  serviceAccountKeyId: varchar("serviceAccountKeyId", { length: 255 }).notNull(),
-  serviceAccountPrivateKey: text("serviceAccountPrivateKey").notNull(), // Encrypted
+  apiKey: varchar("apiKey", { length: 255 }).notNull(), // Voximplant Management API Key
   accountName: varchar("accountName", { length: 255 }),
   isActive: boolean("isActive").default(true).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),

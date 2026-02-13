@@ -42,8 +42,7 @@ export const voximplantRouter = router({
     .input(
       z.object({
         accountId: z.string().min(1),
-        serviceAccountKeyId: z.string().min(1),
-        serviceAccountPrivateKey: z.string().min(1),
+        apiKey: z.string().min(1),
         accountName: z.string().optional(),
       })
     )
@@ -51,8 +50,7 @@ export const voximplantRouter = router({
       // Test connection before saving
       const isValid = await testVoximplantConnection({
         accountId: input.accountId,
-        serviceAccountKeyId: input.serviceAccountKeyId,
-        serviceAccountPrivateKey: input.serviceAccountPrivateKey,
+        apiKey: input.apiKey,
       });
 
       if (!isValid) {
@@ -62,8 +60,7 @@ export const voximplantRouter = router({
       return createVoximplantAccount({
         userId: ctx.user.id,
         accountId: input.accountId,
-        serviceAccountKeyId: input.serviceAccountKeyId,
-        serviceAccountPrivateKey: input.serviceAccountPrivateKey,
+        apiKey: input.apiKey,
         accountName: input.accountName,
         isActive: true,
       });
@@ -136,8 +133,7 @@ export const voximplantRouter = router({
     .input(
       z.object({
         accountId: z.string(),
-        serviceAccountKeyId: z.string(),
-        serviceAccountPrivateKey: z.string(),
+        apiKey: z.string(),
       })
     )
     .mutation(async ({ input }) => {
@@ -435,8 +431,7 @@ export const voximplantRouter = router({
       const callHistory = await getCallHistory(
         {
           accountId: account.accountId,
-          serviceAccountKeyId: account.serviceAccountKeyId,
-          serviceAccountPrivateKey: account.serviceAccountPrivateKey,
+          apiKey: account.apiKey,
         },
         {
           fromDate: input.fromDate,

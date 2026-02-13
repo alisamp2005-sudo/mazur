@@ -12,8 +12,7 @@ export default function VoximplantSetup() {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
     accountId: '',
-    serviceAccountKeyId: '',
-    serviceAccountPrivateKey: '',
+    apiKey: '',
     accountName: '',
   });
 
@@ -25,8 +24,7 @@ export default function VoximplantSetup() {
     try {
       const result = await testConnectionMutation.mutateAsync({
         accountId: formData.accountId,
-        serviceAccountKeyId: formData.serviceAccountKeyId,
-        serviceAccountPrivateKey: formData.serviceAccountPrivateKey,
+        apiKey: formData.apiKey,
       });
 
       if (result.success) {
@@ -61,8 +59,7 @@ export default function VoximplantSetup() {
       });
       setFormData({
         accountId: '',
-        serviceAccountKeyId: '',
-        serviceAccountPrivateKey: '',
+        apiKey: '',
         accountName: '',
       });
     } catch (error: any) {
@@ -134,30 +131,20 @@ export default function VoximplantSetup() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="serviceAccountKeyId">Service Account Key ID</Label>
+              <Label htmlFor="apiKey">API Key</Label>
               <Input
-                id="serviceAccountKeyId"
-                value={formData.serviceAccountKeyId}
-                onChange={(e) =>
-                  setFormData({ ...formData, serviceAccountKeyId: e.target.value })
-                }
-                placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="serviceAccountPrivateKey">Service Account Private Key</Label>
-              <Input
-                id="serviceAccountPrivateKey"
+                id="apiKey"
                 type="password"
-                value={formData.serviceAccountPrivateKey}
+                value={formData.apiKey}
                 onChange={(e) =>
-                  setFormData({ ...formData, serviceAccountPrivateKey: e.target.value })
+                  setFormData({ ...formData, apiKey: e.target.value })
                 }
-                placeholder="Enter private key"
+                placeholder="Enter Voximplant API Key"
                 required
               />
+              <p className="text-sm text-muted-foreground">
+                Generate API Key in Voximplant Platform: Settings → API Keys
+              </p>
             </div>
 
             <div className="space-y-2">
@@ -184,8 +171,7 @@ export default function VoximplantSetup() {
                 onClick={handleTestConnection}
                 disabled={
                   !formData.accountId ||
-                  !formData.serviceAccountKeyId ||
-                  !formData.serviceAccountPrivateKey ||
+                  !formData.apiKey ||
                   testConnectionMutation.isPending
                 }
               >
@@ -199,8 +185,7 @@ export default function VoximplantSetup() {
                 type="submit"
                 disabled={
                   !formData.accountId ||
-                  !formData.serviceAccountKeyId ||
-                  !formData.serviceAccountPrivateKey ||
+                  !formData.apiKey ||
                   createAccountMutation.isPending
                 }
               >
