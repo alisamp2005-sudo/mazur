@@ -274,3 +274,25 @@
 - [x] Add Voximplant section to sidebar navigation
 - [x] Add real-time updates for active Voximplant calls (polling/WebSocket)
 - [ ] Test Voximplant integration end-to-end
+
+
+## yapogovoryu.ru-style Implementation
+
+### Phase 1: Core Workflow
+- [ ] Add Demo/Production mode toggle to agent creation
+- [ ] Add Application ID field to agent settings
+- [ ] Add Routing Rule ID field to agent settings
+- [ ] Improve scenario code generation (complete ready-to-paste code)
+- [ ] Test end-to-end workflow (Demo and Production modes)
+
+### Phase 2: Call Management
+- [ ] Implement audio recording storage (fetch from Voximplant, store in S3)
+- [ ] Implement transcript fetching (from ElevenLabs API after call)
+- [ ] Add audio player to call history
+- [ ] Add transcript viewer to call history
+- [ ] Enhance call history UI with filters
+
+### Phase 3: Advanced Features
+- [ ] Create widget system for website callbacks
+- [ ] Implement batch calling (CSV upload, campaign management)
+- [ ] Add advanced statistics and analytics

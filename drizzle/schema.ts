@@ -197,9 +197,10 @@ export type InsertVoximplantAccount = typeof voximplantAccounts.$inferInsert;
 export const voximplantApplications = mysqlTable("voximplant_applications", {
   id: int("id").autoincrement().primaryKey(),
   voximplantAccountId: int("voximplantAccountId").notNull(),
-  applicationId: varchar("applicationId", { length: 255 }).notNull(), // Voximplant Application ID
+  voximplantApplicationId: varchar("voximplantApplicationId", { length: 255 }), // Voximplant Application ID (from platform)
+  voximplantRuleId: varchar("voximplantRuleId", { length: 255 }), // Voximplant Routing Rule ID
   applicationName: varchar("applicationName", { length: 255 }).notNull(),
-  elevenlabsApiKey: text("elevenlabsApiKey").notNull(), // Encrypted
+  elevenlabsApiKey: text("elevenlabsApiKey").notNull(),
   elevenlabsAgentId: varchar("elevenlabsAgentId", { length: 255 }).notNull(),
   scenarioCode: text("scenarioCode"), // Generated JavaScript code
   phoneNumber: varchar("phoneNumber", { length: 50 }),
@@ -226,6 +227,7 @@ export const voximplantCalls = mysqlTable("voximplant_calls", {
   duration: int("duration"), // Duration in seconds
   cost: int("cost"), // Cost in cents
   status: mysqlEnum("status", ["answered", "failed", "busy", "no-answer"]).notNull(),
+  recordingUrl: text("recordingUrl"), // URL to call recording
   hasTranscript: boolean("hasTranscript").default(false).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),

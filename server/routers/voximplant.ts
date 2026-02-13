@@ -152,7 +152,8 @@ export const voximplantRouter = router({
     .input(
       z.object({
         voximplantAccountId: z.number(),
-        applicationId: z.string().min(1),
+        voximplantApplicationId: z.string().optional(),
+        voximplantRuleId: z.string().optional(),
         applicationName: z.string().min(1),
         elevenlabsApiKey: z.string().min(1),
         elevenlabsAgentId: z.string().min(1),
@@ -174,7 +175,8 @@ export const voximplantRouter = router({
 
       return createVoximplantApplication({
         voximplantAccountId: input.voximplantAccountId,
-        applicationId: input.applicationId,
+        voximplantApplicationId: input.voximplantApplicationId,
+        voximplantRuleId: input.voximplantRuleId,
         applicationName: input.applicationName,
         elevenlabsApiKey: input.elevenlabsApiKey,
         elevenlabsAgentId: input.elevenlabsAgentId,

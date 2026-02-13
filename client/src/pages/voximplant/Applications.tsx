@@ -38,7 +38,8 @@ export default function VoximplantApplications() {
   const [isCodeDialogOpen, setIsCodeDialogOpen] = useState(false);
   const [selectedCode, setSelectedCode] = useState('');
   const [formData, setFormData] = useState({
-    applicationId: '',
+    voximplantApplicationId: '',
+    voximplantRuleId: '',
     applicationName: '',
     elevenlabsApiKey: '',
     elevenlabsAgentId: '',
@@ -73,7 +74,8 @@ export default function VoximplantApplications() {
 
       setIsCreateDialogOpen(false);
       setFormData({
-        applicationId: '',
+        voximplantApplicationId: '',
+        voximplantRuleId: '',
         applicationName: '',
         elevenlabsApiKey: '',
         elevenlabsAgentId: '',
@@ -169,16 +171,28 @@ export default function VoximplantApplications() {
             <form onSubmit={handleCreateApplication}>
               <div className="space-y-4 py-4">
                 <div className="space-y-2">
-                  <Label htmlFor="applicationId">Voximplant Application ID</Label>
+                  <Label htmlFor="voximplantApplicationId">Voximplant Application ID (Optional)</Label>
                   <Input
-                    id="applicationId"
-                    value={formData.applicationId}
-                    onChange={(e) => setFormData({ ...formData, applicationId: e.target.value })}
+                    id="voximplantApplicationId"
+                    value={formData.voximplantApplicationId}
+                    onChange={(e) => setFormData({ ...formData, voximplantApplicationId: e.target.value })}
                     placeholder="12345678"
-                    required
                   />
                   <p className="text-sm text-muted-foreground">
-                    Create the application in Voximplant dashboard first, then enter its ID here
+                    After creating the scenario in Voximplant, paste the Application ID here
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="voximplantRuleId">Voximplant Rule ID (Optional)</Label>
+                  <Input
+                    id="voximplantRuleId"
+                    value={formData.voximplantRuleId}
+                    onChange={(e) => setFormData({ ...formData, voximplantRuleId: e.target.value })}
+                    placeholder="87654321"
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    After creating the routing rule, paste the Rule ID here
                   </p>
                 </div>
 
@@ -277,7 +291,8 @@ export default function VoximplantApplications() {
                   <div>
                     <CardTitle>{app.applicationName}</CardTitle>
                     <CardDescription className="mt-1">
-                      App ID: {app.applicationId}
+                      {app.voximplantApplicationId && `App ID: ${app.voximplantApplicationId}`}
+                      {app.voximplantRuleId && ` | Rule ID: ${app.voximplantRuleId}`}
                     </CardDescription>
                   </div>
                   <Badge variant={app.status === 'active' ? 'default' : 'secondary'}>
@@ -337,22 +352,35 @@ export default function VoximplantApplications() {
           <DialogHeader>
             <DialogTitle>VoxEngine Scenario Code</DialogTitle>
             <DialogDescription>
-              Copy this code and paste it into your Voximplant Scenario editor
+              Follow these steps to complete the integration:
             </DialogDescription>
           </DialogHeader>
-          <div className="relative">
-            <pre className="bg-muted p-4 rounded-lg overflow-auto max-h-[50vh] text-sm">
-              <code>{selectedCode}</code>
-            </pre>
-            <Button
-              size="sm"
-              variant="outline"
-              className="absolute top-2 right-2"
-              onClick={handleCopyCode}
-            >
-              <Copy className="h-4 w-4 mr-2" />
-              Copy
-            </Button>
+          <div className="space-y-4">
+            <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg text-sm">
+              <h4 className="font-semibold mb-2">Setup Instructions:</h4>
+              <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
+                <li>Copy the JavaScript code below</li>
+                <li>Go to Voximplant Dashboard → Applications → Scenarios</li>
+                <li>Create a new scenario and paste the code</li>
+                <li>Save the scenario and note the Application ID</li>
+                <li>Create a routing rule for this scenario and note the Rule ID</li>
+                <li>Come back here and paste both IDs in the application settings</li>
+              </ol>
+            </div>
+            <div className="relative">
+              <pre className="bg-muted p-4 rounded-lg overflow-auto max-h-[40vh] text-sm">
+                <code>{selectedCode}</code>
+              </pre>
+              <Button
+                size="sm"
+                variant="outline"
+                className="absolute top-2 right-2"
+                onClick={handleCopyCode}
+              >
+                <Copy className="h-4 w-4 mr-2" />
+                Copy
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>

@@ -220,3 +220,28 @@ VoxEngine.addEventListener(AppEvents.CallAlerting, async ({ call }) => {
   }
 });`;
 }
+
+/**
+ * Get call recording URL
+ */
+export async function getCallRecordingUrl(
+  credentials: VoximplantCredentials,
+  recordUrl: string
+): Promise<string> {
+  // Voximplant record URLs are already public and accessible
+  // Just return the URL as-is
+  return recordUrl;
+}
+
+/**
+ * Get call recordings for a specific call session
+ */
+export async function getCallRecordings(
+  credentials: VoximplantCredentials,
+  callSessionHistoryId: number
+) {
+  return makeVoximplantRequest('GetCallHistory', {
+    call_session_history_id: callSessionHistoryId,
+    with_records: true,
+  }, credentials);
+}
