@@ -32,7 +32,7 @@ async function makeVoximplantRequest(
   // Build query string
   const queryParams = new URLSearchParams({
     ...params,
-    account_id: credentials.accountId,
+    account_id: String(credentials.accountId),
   });
 
   // Add API key authentication
