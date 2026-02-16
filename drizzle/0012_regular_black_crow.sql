@@ -1,0 +1,1 @@
+ALTER TABLE `voximplant_calls` ADD `recordingUrl` text;

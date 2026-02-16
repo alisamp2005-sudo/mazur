@@ -1,0 +1,97 @@
+{
+  "version": "5",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1768835269035,
+      "tag": "0000_overrated_albert_cleary",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1768835652694,
+      "tag": "0001_careless_timeslip",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1769184852759,
+      "tag": "0002_yellow_captain_universe",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1769362001763,
+      "tag": "0003_adorable_kronos",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1769375441825,
+      "tag": "0004_fast_spencer_smythe",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1769383173019,
+      "tag": "0005_odd_talkback",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1769383312054,
+      "tag": "0006_broken_venom",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1769383778629,
+      "tag": "0007_rainy_valeria_richards",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1769632733827,
+      "tag": "0008_soft_lord_tyger",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "5",
+      "when": 1769666242492,
+      "tag": "0009_solid_blazing_skull",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1770912266610,
+      "tag": "0010_nosy_clint_barton",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "5",
+      "when": 1770951124176,
+      "tag": "0011_military_wonder_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "5",
+      "when": 1770955744276,
+      "tag": "0012_regular_black_crow",
+      "breakpoints": true
+    }
+  ]
+}

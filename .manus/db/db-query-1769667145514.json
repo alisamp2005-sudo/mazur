@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS `settings` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `key` varchar(255) NOT NULL,\n  `value` text NOT NULL,\n  `description` text,\n  `updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n  CONSTRAINT `settings_id` PRIMARY KEY(`id`),\n  CONSTRAINT `settings_key_unique` UNIQUE(`key`)\n);\n\nINSERT INTO `settings` (`key`, `value`, `description`) VALUES ('active_extensions', '1000', 'Active 3CX extensions to monitor') ON DUPLICATE KEY UPDATE `key`=`key`;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4Va2H7czYQm4hXN.1701b0c89732 --database J2tnPxqSH3BCis3dqzHXrX --execute CREATE TABLE IF NOT EXISTS `settings` (\n  `id` int AUTO_INCREMENT NOT NULL,\n  `key` varchar(255) NOT NULL,\n  `value` text NOT NULL,\n  `description` text,\n  `updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n  CONSTRAINT `settings_id` PRIMARY KEY(`id`),\n  CONSTRAINT `settings_key_unique` UNIQUE(`key`)\n);\n\nINSERT INTO `settings` (`key`, `value`, `description`) VALUES ('active_extensions', '1000', 'Active 3CX extensions to monitor') ON DUPLICATE KEY UPDATE `key`=`key`;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 1085
+}

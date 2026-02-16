@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO calls (conversationId, callSid, agentId, phoneNumberId, toNumber, status, hasAudio, hasTranscript) VALUES ('conv_6501kfxn4dd6e9taez6973mmc4ch', 'SCL_QzJ3Bmt5aiD7', (SELECT id FROM agents WHERE agentId = 'agent_8301kfgw54f5eekabw8htz6ekgnw'), NULL, '+19176193743', 'initiated', 0, 0);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4Va2H7czYQm4hXN.1701b0c89732 --database J2tnPxqSH3BCis3dqzHXrX --execute INSERT INTO calls (conversationId, callSid, agentId, phoneNumberId, toNumber, status, hasAudio, hasTranscript) VALUES ('conv_6501kfxn4dd6e9taez6973mmc4ch', 'SCL_QzJ3Bmt5aiD7', (SELECT id FROM agents WHERE agentId = 'agent_8301kfgw54f5eekabw8htz6ekgnw'), NULL, '+19176193743', 'initiated', 0, 0);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 371
+}

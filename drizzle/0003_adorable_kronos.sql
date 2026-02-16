@@ -1,0 +1,1 @@
+ALTER TABLE `calls` MODIFY COLUMN `phoneNumberId` int;

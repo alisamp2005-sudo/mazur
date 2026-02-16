@@ -1,0 +1,9 @@
+{
+  "query": "SELECT * FROM agents WHERE isActive = 1 LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4Va2H7czYQm4hXN.1701b0c89732 --database J2tnPxqSH3BCis3dqzHXrX --execute SELECT * FROM agents WHERE isActive = 1 LIMIT 5;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 383
+}

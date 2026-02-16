@@ -1,0 +1,20 @@
+#!/usr/bin/expect -f
+set timeout -1
+
+# Copy deployment script
+spawn scp -o StrictHostKeyChecking=no deploy-complete.sh root@150.241.230.244:/root/
+expect "password:"
+send "7IBUkk7IPSd2dKGpTuzI\r"
+expect eof
+
+# Copy project archive  
+spawn scp -o StrictHostKeyChecking=no ../elevenlabs-deploy.tar.gz root@150.241.230.244:/root/
+expect "password:"
+send "7IBUkk7IPSd2dKGpTuzI\r"
+expect eof
+
+# Execute deployment script
+spawn ssh root@150.241.230.244 "bash /root/deploy-complete.sh"
+expect "password:"
+send "7IBUkk7IPSd2dKGpTuzI\r"
+expect eof

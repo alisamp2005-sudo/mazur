@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO agents (agentId, phoneNumberId, name, description, isActive) VALUES ('0E5LTmYQMsYPBxL3vWHd', 'pn_0e5ltmyqmsypbxl3vwhd', 'TESTED', 'AI agent with transfer capability to Ring Group 8000', 1);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4Va2H7czYQm4hXN.1701b0c89732 --database J2tnPxqSH3BCis3dqzHXrX --execute INSERT INTO agents (agentId, phoneNumberId, name, description, isActive) VALUES ('0E5LTmYQMsYPBxL3vWHd', 'pn_0e5ltmyqmsypbxl3vwhd', 'TESTED', 'AI agent with transfer capability to Ring Group 8000', 1);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 369
+}
