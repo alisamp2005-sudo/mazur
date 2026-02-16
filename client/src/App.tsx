@@ -1,0 +1,141 @@
+import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import NotFound from "@/pages/NotFound";
+import { Route, Switch } from "wouter";
+import ErrorBoundary from "./components/ErrorBoundary";
+import { ThemeProvider } from "./contexts/ThemeContext";
+import DashboardLayout from "./components/DashboardLayout";
+import Dashboard from "./pages/Dashboard";
+import Agents from "./pages/Agents";
+import PhoneNumbers from "./pages/PhoneNumbers";
+import CallLogs from "./pages/CallLogs";
+import QueueSettings from "./pages/QueueSettings";
+import CallQuality from "./pages/CallQuality";
+import PromptManager from "./pages/PromptManager";
+import SingleCall from "./pages/SingleCall";
+import TelegramSettings from "./pages/TelegramSettings";
+import Login from "./pages/Login";
+import VoximplantSetup from "./pages/voximplant/Setup";
+import VoximplantApplications from "./pages/voximplant/Applications";
+import VoximplantCallHistory from "./pages/voximplant/CallHistory";
+import VoximplantStatistics from "./pages/voximplant/Statistics";
+import VoximplantCreateAgent from "./pages/voximplant/CreateAgent";
+import MakeCall from "./pages/calls/MakeCall";
+import BulkCampaign from "./pages/campaigns/BulkCampaign";
+import CampaignsList from "./pages/campaigns/CampaignsList";
+import ReportsDashboard from "./pages/reports/ReportsDashboard";
+
+function Router() {
+  return (
+    <Switch>
+      <Route path="/login" component={Login} />
+      <Route path="/">
+        <DashboardLayout>
+          <Dashboard />
+        </DashboardLayout>
+      </Route>
+      <Route path="/agents">
+        <DashboardLayout>
+          <Agents />
+        </DashboardLayout>
+      </Route>
+      <Route path="/phone-numbers">
+        <DashboardLayout>
+          <PhoneNumbers />
+        </DashboardLayout>
+      </Route>
+      <Route path="/call-logs">
+        <DashboardLayout>
+          <CallLogs />
+        </DashboardLayout>
+      </Route>
+      <Route path="/queue-settings">
+        <DashboardLayout>
+          <QueueSettings />
+        </DashboardLayout>
+      </Route>
+      <Route path="/call-quality">
+        <DashboardLayout>
+          <CallQuality />
+        </DashboardLayout>
+      </Route>
+      <Route path="/prompt-manager">
+        <DashboardLayout>
+          <PromptManager />
+        </DashboardLayout>
+      </Route>
+      <Route path="/make-call">
+        <DashboardLayout>
+          <SingleCall />
+        </DashboardLayout>
+      </Route>
+      <Route path="/telegram-settings">
+        <DashboardLayout>
+          <TelegramSettings />
+        </DashboardLayout>
+      </Route>
+      <Route path="/voximplant/setup">
+        <DashboardLayout>
+          <VoximplantSetup />
+        </DashboardLayout>
+      </Route>
+      <Route path="/voximplant/create-agent">
+        <DashboardLayout>
+          <VoximplantCreateAgent />
+        </DashboardLayout>
+      </Route>
+      <Route path="/voximplant/applications">
+        <DashboardLayout>
+          <VoximplantApplications />
+        </DashboardLayout>
+      </Route>
+      <Route path="/voximplant/call-history">
+        <DashboardLayout>
+          <VoximplantCallHistory />
+        </DashboardLayout>
+      </Route>
+      <Route path="/voximplant/statistics">
+        <DashboardLayout>
+          <VoximplantStatistics />
+        </DashboardLayout>
+      </Route>
+      <Route path="/calls/make">
+        <DashboardLayout>
+          <MakeCall />
+        </DashboardLayout>
+      </Route>
+      <Route path="/campaigns">
+        <DashboardLayout>
+          <CampaignsList />
+        </DashboardLayout>
+      </Route>
+      <Route path="/campaigns/new">
+        <DashboardLayout>
+          <BulkCampaign />
+        </DashboardLayout>
+      </Route>
+      <Route path="/reports">
+        <DashboardLayout>
+          <ReportsDashboard />
+        </DashboardLayout>
+      </Route>
+      <Route path="/404" component={NotFound} />
+      <Route component={NotFound} />
+    </Switch>
+  );
+}
+
+function App() {
+  return (
+    <ErrorBoundary>
+      <ThemeProvider defaultTheme="light">
+        <TooltipProvider>
+          <Toaster />
+          <Router />
+        </TooltipProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
+  );
+}
+
+export default App;
