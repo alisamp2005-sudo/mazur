@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+  # Mazur Admin Panel Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mazur-app
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_HOST=db
+      - DATABASE_USER=${DATABASE_USER:-mazur}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD:-mazur_password}
+      - DATABASE_NAME=${DATABASE_NAME:-mazur}
+      - VOXIMPLANT_ACCOUNT_ID=${VOXIMPLANT_ACCOUNT_ID}
+      - VOXIMPLANT_API_KEY=${VOXIMPLANT_API_KEY}
+      - ELEVENLABS_API_KEY=${ELEVENLABS_API_KEY}
+      - ELEVENLABS_AGENT_ID=${ELEVENLABS_AGENT_ID}
+      - PORT=3000
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - mazur-network
+    volumes:
+      - ./recordings:/app/recordings
+
+  # MySQL Database
+  db:
+    image: mysql:8.0
+    container_name: mazur-db
+    environment:
+      - MYSQL_DATABASE=${DATABASE_NAME:-mazur}
+      - MYSQL_USER=${DATABASE_USER:-mazur}
+      - MYSQL_PASSWORD=${DATABASE_PASSWORD:-mazur_password}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-root_password}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./migrations:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "3306:3306"
+    restart: unless-stopped
+    networks:
+      - mazur-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-root_password}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # Nginx Reverse Proxy (optional)
+  nginx:
+    image: nginx:alpine
+    container_name: mazur-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - app
+    restart: unless-stopped
+    networks:
+      - mazur-network
+    profiles:
+      - with-nginx
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  mazur-network:
+    driver: bridge
